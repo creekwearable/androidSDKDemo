@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+        <!-- 右对齐标题 -->
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icon_back"
+            android:layout_marginLeft="12dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@android:drawable/presence_busy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <!-- 居中标题 -->
+        <TextView
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:id="@+id/centerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Centered Title"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:gravity="center" />
+
+
+
+    </RelativeLayout>
+    <com.google.android.material.divider.MaterialDivider
+        app:dividerColor="@color/cardview_dark_background"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <Button
+          android:id="@+id/sendCWD"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerInParent="true"
+          android:layout_marginRight="16dp"
+          android:background="@drawable/rounded_button"
+          android:gravity="center"
+          android:text="Send"
+          android:textColor="@color/white"
+          android:textSize="12sp" />
+
+  </RelativeLayout>
+    <LinearLayout
+        android:background="@color/purple_200"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:textSize="12sp"
+           android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+</LinearLayout>
