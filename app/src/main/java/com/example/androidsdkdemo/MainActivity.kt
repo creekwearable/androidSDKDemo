@@ -15,9 +15,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.androidsdkdemo.R
 import com.example.mylibrary.CreekManager
 import com.example.proto.Enums
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -72,6 +72,20 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 "Upload" -> {
+                    Thread{
+                        try {
+                            val inputStream = assets.open("res.ota") // "file.txt" 是 assert 目录下的文件名
+                            // 使用 inputStream 处理资源数据
+                            var  fileData :ByteArray  = inputStream.readBytes()
+                            CreekManager.sInstance.upload("res.ota", fileData, uploadProgress = {
+                                    progress ->
+                                print(progress)
+                            }, uploadSuccess = {}, uploadFailure = {c,m ->})
+                            inputStream.close()
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }.start()
 
                 }
                 "Binding" -> {
