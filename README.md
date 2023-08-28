@@ -15,8 +15,7 @@
     
     dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    debugImplementation 'com.example.creek_sdk:flutter_debug:1.0'
-    releaseImplementation 'com.example.creek_sdk:flutter_release:1.0'
+    implementation 'com.example.creek_sdk:flutter_release:1.0'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.google.protobuf:protobuf-javalite:4.0.0-rc-2'
     }
@@ -29,7 +28,7 @@
             url "$storageUrl/download.flutter.io"
         }
         maven {
-            url '/Users/bean/Documents/项目/creek_sdk_flutter/build/host/outputs/repo'
+            url 'https://creekwearable.github.io/static/repo'
         }
       }
 
