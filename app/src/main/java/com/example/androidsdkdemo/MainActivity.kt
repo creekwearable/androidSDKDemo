@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         rightTitle.text="Bluetooth"
         centerTitle.text="operating platform"
         rightTitle.setOnClickListener {
+            requestBluetoothPermissions()
             // 检查是否已经获得蓝牙权限
             if (hasBluetoothPermissions()) {
                 // 已经获得了蓝牙权限，可以执行相关操作
@@ -121,11 +122,13 @@ class MainActivity : AppCompatActivity() {
     private fun requestBluetoothPermissions() {
         val permissions = arrayOf(
            // Manifest.permission.BLUETOOTH,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.BLUETOOTH_SCAN,
             Manifest.permission.BLUETOOTH_ADVERTISE,
             Manifest.permission.BLUETOOTH_CONNECT,
-//            Manifest.permission.ACCESS_FINE_LOCATION,
-//            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_MEDIA_LOCATION
+
         )
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_BLUETOOTH_PERMISSION)
@@ -155,6 +158,8 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT > 30) {
             if ((ContextCompat.checkSelfPermission(this, "android.permission.BLUETOOTH_SCAN") != PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(
                     this, "android.permission.BLUETOOTH_ADVERTISE")
+                        != PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(
+                    this, "android.permission.ACCESS_COARSE_LOCATION")
                         != PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this, "android.permission.BLUETOOTH_CONNECT") != PERMISSION_GRANTED)) {
                 ActivityCompat.requestPermissions(
                     this, arrayOf(
