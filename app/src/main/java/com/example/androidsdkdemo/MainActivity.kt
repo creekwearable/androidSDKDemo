@@ -50,6 +50,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         CreekManager.sInstance.register(application)
         CreekManager.sInstance.initSDK()
+        CreekManager.sInstance.autoConnect(0)
+        CreekManager.sInstance.listenDeviceState { status, deviceName ->
+            Log.w("listenDeviceState+++++","$status" + "123" + "$deviceName")
+        }
         var rightTitle =findViewById<TextView>(R.id.rightTitle)
         var centerTitle =findViewById<TextView>(R.id.centerTitle)
         var listView =findViewById<ListView>(R.id.listview)
