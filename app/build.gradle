@@ -43,5 +43,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.google.protobuf:protobuf-javalite:4.0.0-rc-2'
-    implementation 'com.example.creek_sdk:flutter_release:1.0'
+    implementation 'com.example.creek_sdk:flutter_release:2.0'
 }

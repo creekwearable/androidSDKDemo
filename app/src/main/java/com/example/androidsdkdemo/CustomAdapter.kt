@@ -52,9 +52,10 @@ class CustomAdapter(private val context: Context,  var data: List<ScanDeviceMode
             }
 
             val item = getItem(position) as ScanDeviceModel
-            viewHolder.nameTextView.text = item.device?.name
+            viewHolder.nameTextView.text = item.device?.name + "\n" + (item.macAddress ?: item.device?.id)
             viewHolder.connectDeviceView.setOnClickListener {
                 if (viewHolder.connectDeviceView.text == "connect"){
+
                     CreekManager.sInstance.connect(item.device?.id ?: "", connect = {
                             connectState: Boolean ->
                         if (connectState){

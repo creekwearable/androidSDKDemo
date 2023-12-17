@@ -16,13 +16,13 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.example.androidsdkdemo.R
 import com.example.model.ScanDeviceModel
 import com.example.mylibrary.CreekManager
 
 
 class ScanActivity : AppCompatActivity() {
 
+    var listView: ListView? = null
     private var listScanDeviceModel: List<ScanDeviceModel> = emptyList()
 
     @SuppressLint("MissingInflatedId")
@@ -30,7 +30,6 @@ class ScanActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_scan)
-        CreekManager.sInstance.register(application)
         var centerTitle =findViewById<TextView>(R.id.centerTitle)
         var listView =findViewById<ListView>(R.id.listview)
 
@@ -40,14 +39,14 @@ class ScanActivity : AppCompatActivity() {
             finish()
         }
 
-        CreekManager.sInstance.scan(timeOut = 15, devices = { model: Array<ScanDeviceModel> ->
+        CreekManager.sInstance.scan(timeOut = 15, devices = { model: List<ScanDeviceModel> ->
             // 处理设备列表
             listScanDeviceModel= model.toList()
-           // addpter.setDeviceModel(model.toList())
+            // addpter.setDeviceModel(model.toList())
             var addpter = CustomAdapter(this,listScanDeviceModel)
             listView!!.adapter = addpter
         } ,endScan = {
-
+            Log.w("endScan","endScan")
         })
     }
 
