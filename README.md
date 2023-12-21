@@ -64,7 +64,8 @@
 
 
 ## SDK Usage document
-Chinese document version：<https://xiaochey.feishu.cn/docx/L7Zyd5ZYwoH90FxNcCycfM3Kn7T?from=from_copylink>      
+Chinese document version：<https://xiaochey.feishu.cn/docx/L7Zyd5ZYwoH90FxNcCycfM3Kn7T?from=from_copylink> 
+     
 English document version：<https://xiaochey.feishu.cn/docx/W95CduAStoi7nNxQQVxcl19Fnrh>            
                             
                             
