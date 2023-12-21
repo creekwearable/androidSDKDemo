@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             Log.w("123456", it.toString())
         }
         CreekManager.sInstance.exceptionListen {
-            Log.w("123456", it.toString())
+            Log.w("123456", it)
         }
         CreekManager.sInstance.eventReportListen {
 
