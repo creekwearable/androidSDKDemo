@@ -56,7 +56,7 @@ class SendCommandViewModel {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun sendCommand(title:String, context:Context) {
-        loddingState.value = true
+//        loddingState.value = true
         when (title) {
             "Binding" -> {
                 CreekManager.sInstance.bindingDevice(
@@ -65,16 +65,16 @@ class SendCommandViewModel {
                     code = null,
                     success = {
                         responseText.value = "Binding success"
-                        loddingState.value = false
+//                        loddingState.value = false
                     },
                     failure = {
                         responseText.value = "Binding failure"
-                        loddingState.value = false
+//                        loddingState.value = false
 
                     })
             }
             "Sync" -> {
-                loddingState.value = false
+//                loddingState.value = false
                 CreekManager.sInstance.sync(syncSuccess = {
                     responseText.value = "Success"
                 }, syncFailure = {
@@ -91,7 +91,7 @@ class SendCommandViewModel {
                     var fileData: ByteArray = inputStream.readBytes()
                     val decimalArray: IntArray =
                         fileData.map { it.toInt() and 0xFF }.toIntArray()
-                    loddingState.value = false
+//                    loddingState.value = false
                     CreekManager.sInstance.upload(
                         "res.ota",
                         decimalArray,
@@ -191,14 +191,14 @@ class SendCommandViewModel {
             }
             "Get Device Information" -> {
                 CreekManager.sInstance.getFirmware({ model: Deviceinfo.protocol_device_info ->
-                    loddingState.value = false
+//                    loddingState.value = false
                     responseText.value = model.toString()
                     CreekManager.sInstance.getSNFirmware(model,{
                         Log.w("sn", "sn++++$it")
                     })
 
                 }, failure = { c, m ->
-                    loddingState.value = false
+//                    loddingState.value = false
                     responseText.value = m
                 })
 
