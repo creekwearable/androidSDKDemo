@@ -52,10 +52,6 @@ class CustomDialViewModel : ViewModel() {
     }
 
 
-
-
-
-
     fun installDial() {
         Log.d("CustomDialViewModel", "installDial")
         CreekManager.sInstance.encodeDial { model ->

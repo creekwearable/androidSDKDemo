@@ -199,11 +199,8 @@ fun CustomDialScreen(
                             viewModel.chooseBackground(index)
                         }
                     }
-
-
                 }
             }
-
             if ((viewModel.dialModel.value?.functions ?: emptyList()).isNotEmpty()){
                 CustomFunctionality(
                     positionSelectedIndex = viewModel.positionSelectedIndex.intValue,

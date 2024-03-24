@@ -15,7 +15,7 @@
     
     dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation 'com.example.creek_sdk:flutter_release:2.0'
+    implementation 'com.example.creek_sdk:flutter_release:2.1'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.google.protobuf:protobuf-javalite:4.0.0-rc-2'
     }
@@ -34,7 +34,7 @@
 
 ● Add resource pack CreekSDK.aar
 
-   [CreekSDK.aar](https://creekwearable.github.io/static/andriodSDKVersion/2.0/CreekSDK2.0.aar)
+   [CreekSDK2.1.aar](https://creekwearable.github.io/static/andriodSDKVersion/2.1/CreekSDK2.1.aar)
 
 
 #### Step 2：Rights Profile
@@ -69,7 +69,11 @@ Chinese document version：<https://xiaochey.feishu.cn/docx/L7Zyd5ZYwoH90FxNcCyc
 English document version：<https://xiaochey.feishu.cn/docx/W95CduAStoi7nNxQQVxcl19Fnrh>            
                             
                             
-                            
+## Custom dial
+
+Chinese document version：<https://xiaochey.feishu.cn/docx/MokFdDOjUoNOSfxnHeqcUQIwnwe?from=from_copylink>
+
+English document version：<https://xiaochey.feishu.cn/docx/FSmWd2bopo8jwyxiPdAcTr3anih?from=from_copylink>                      
                             
                             
                             
