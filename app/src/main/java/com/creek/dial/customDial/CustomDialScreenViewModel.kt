@@ -45,6 +45,7 @@ class CustomDialViewModel : ViewModel() {
 
      val _dialModel = MutableLiveData(DialParseModel(null,null,null,null,null,null))
      val dialModel: LiveData<DialParseModel> = _dialModel
+
     fun updateDialModel(newDialModel: DialParseModel) {
         _dialModel.value = newDialModel
         baseImage.value = newDialModel.previewImageBytes ?: ""

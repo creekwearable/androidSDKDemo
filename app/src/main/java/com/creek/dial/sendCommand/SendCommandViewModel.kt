@@ -25,11 +25,14 @@ import com.example.mylibrary.CreekManager
 import com.example.mylibrary.SportTypeSerializer
 import com.example.mylibrary.sportType
 import com.example.proto.Alarm
+import com.example.proto.AppList
 import com.example.proto.Call
+import com.example.proto.Card
 import com.example.proto.Contacts
 import com.example.proto.Deviceinfo
 import com.example.proto.Disturb
 import com.example.proto.Enums
+import com.example.proto.Focus
 import com.example.proto.Language
 import com.example.proto.Message
 import com.example.proto.Monitor
@@ -37,9 +40,12 @@ import com.example.proto.Mtu
 import com.example.proto.Screen
 import com.example.proto.SleepMonitor
 import com.example.proto.Sport
+import com.example.proto.Standing
+import com.example.proto.Table
 import com.example.proto.Time
 import com.example.proto.Userinfo
 import com.example.proto.Watchdial
+import com.example.proto.WaterMonitor
 import com.example.proto.Weather
 import com.example.proto.Wordtime
 import com.google.gson.GsonBuilder
@@ -707,6 +713,135 @@ class SendCommandViewModel {
 
                     }
                 }
+
+            }
+            "Get card" -> {
+                CreekManager.sInstance.getCard({model: Card.protocol_quick_card_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "Set card" -> {
+                CreekManager.sInstance.getCard({model: Card.protocol_quick_card_inquire_reply ->
+                    var operate = Card. protocol_quick_card_operate()
+                    val cardType: MutableList<Enums.quick_card_type> = mutableListOf()
+                    model.cardTypeList.forEach { quickCardType ->
+                        if (quickCardType == Enums.quick_card_type.CARD_TYPE_DIAL) {
+                            if (!model.cardTypeDialSupport.isDelete) {
+                                ///Removal is not supported and must be added
+                                cardType.add(quickCardType)
+                            }
+                        }else{
+                            if(quickCardType == Enums.quick_card_type.CARD_TYPE_ACTIVITY){
+
+                            }else{
+                                cardType.add(quickCardType)
+                            }
+                        }
+                    }
+                    operate.cardTypeList.addAll(cardType)
+                    CreekManager.sInstance.setCard(model = operate, success = {
+                        responseText.value = "success"
+                    }, failure = {_, m ->
+                        responseText.value = m
+                    })
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "getStand" -> {
+                CreekManager.sInstance.getStanding({model: Standing.protocol_standing_remind_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "setStand" -> {
+                var  operate =  Standing.protocol_standing_remind_operate()
+                var standing =  Standing.protocol_standing_remind_set()
+                ///Just set the switch  other attributes do not need to be set
+                standing.switchFlag = true
+                operate.standingRemind = standing
+                CreekManager.sInstance.setStanding(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "getWater" -> {
+                CreekManager.sInstance.getWater({model: WaterMonitor.protocol_drink_water_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "setWater" -> {
+                var  operate =  WaterMonitor.protocol_drink_water_operate()
+                operate.switchFlag = true
+                operate.startHour = 8
+                operate.startMinute = 0
+                operate.endHour = 18
+                operate.endMinute = 0
+                CreekManager.sInstance.setWater(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "getFocus" -> {
+                CreekManager.sInstance.getFocusSleep({model: Focus.protocol_focus_mode_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "setFocus" -> {
+                var  operate =  Focus.protocol_focus_mode_operate()
+                var mode = Focus.protocol_focus_sleep_mode()
+                mode.switchFlag = true
+                mode.startHour = 22
+                mode.endHour = 8
+                mode.startMinute = 0
+                mode.endMinute = 0
+                operate.sleepMode = mode
+                CreekManager.sInstance.setFocusSleep(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "getAppList" -> {
+                CreekManager.sInstance.getAppList({model: AppList.protocol_app_list_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "setAppList" -> {
+                var  operate =  AppList.protocol_app_list_operate()
+                CreekManager.sInstance.setAppList(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+            }
+            "functionTable" -> {
+                CreekManager.sInstance.getTable({model: Table.protocol_function_table ->
+                    responseText.value = model.toString()
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
 
             }
         }
