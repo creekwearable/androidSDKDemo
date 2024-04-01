@@ -21,6 +21,7 @@ import com.example.model.PhoneModel
 import com.example.model.SleepModel
 import com.example.model.SportModel
 import com.example.model.StressModel
+import com.example.model.fromTable
 import com.example.mylibrary.CreekManager
 import com.example.mylibrary.SportTypeSerializer
 import com.example.mylibrary.sportType
@@ -326,13 +327,35 @@ class SendCommandViewModel {
 
             }
             "Set Screen Brightness" -> {
-                var model = Screen.protocol_screen_brightness_operate()
-                model.nightAutoAdjust.startHour = 20
-                CreekManager.sInstance.setScreen(model = model, {
-                    responseText.value = "success"
+
+                CreekManager.sInstance.getScreen({ model: Screen.protocol_screen_brightness_inquire_reply ->
+
+                    var operate = Screen.protocol_screen_brightness_operate()
+                    var screenTable = model.fromTable()
+                    if(screenTable.steady){
+                        var aod = Screen.protocol_screen_aod_time_setting()
+                        aod.mode = Enums.aod_mode.INTELLIGENT_MODE
+                        aod.startHour = 8
+                        aod.startMinute = 0
+                        aod.endHour = 10
+                        aod.endMinute = 0
+                        operate.aodTimeSetting = aod
+                    }else{
+                        operate.aodSwitchFlag = true
+                    }
+                    operate.level = 100
+                    operate.showInterval = 5
+                    operate.levelFlag = true
+                    CreekManager.sInstance.setScreen(model = operate, {
+                        responseText.value = "success"
+                    }, failure = { _, m ->
+                        responseText.value = m
+                    })
                 }, failure = { _, m ->
                     responseText.value = m
                 })
+
+
             }
             "Get Health Monitoring" -> {
                 var model = Monitor.protocol_health_monitor_operate()
