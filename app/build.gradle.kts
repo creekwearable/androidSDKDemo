@@ -55,7 +55,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/CreekSDK2.2.aar"))
+    implementation(files("libs/CreekSDK2.5.aar"))
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -72,7 +72,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.3")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
-    implementation("com.example.creek_sdk:flutter_release:2.3")
+    implementation("com.example.creek_sdk:flutter_release:2.5")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
