@@ -764,7 +764,7 @@ class SendCommandViewModel {
                             }
                         }
                     }
-                    operate.cardTypeList.addAll(cardType)
+                    operate.addAllCardType(cardType)
                     CreekManager.sInstance.setCard(model = operate, success = {
                         responseText.value = "success"
                     }, failure = {_, m ->

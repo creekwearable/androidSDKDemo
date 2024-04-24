@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.ScanDeviceModel
 import com.example.mylibrary.CreekManager
+import com.example.proto.Enums
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
@@ -40,6 +41,16 @@ class ScanDeviceViewModel : ViewModel() {
       CreekManager.sInstance.connect(id = deviceId, connect = {
           if (it){
               connectDeviceId.value =  deviceId
+              CreekManager.sInstance.bindingDevice(
+                  bindType = Enums.bind_method.BIND_NORMAL,
+                  id = null,
+                  code = null,
+                  success = {
+                  },
+                  failure = {
+
+                  })
+
           }else{
               connectDeviceId.value = ""
           }

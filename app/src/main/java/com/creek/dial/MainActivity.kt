@@ -1,29 +1,18 @@
 package com.creek.dial
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,19 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -63,11 +46,10 @@ import com.creek.dial.scanDevice.ScanDeviceScreen
 import com.creek.dial.sdkFunction.SdkFunction
 import com.creek.dial.sendCommand.SendCommandScreen
 import com.creek.dial.ui.theme.Creek_dial_androidTheme
+import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.CreekManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -93,6 +75,19 @@ class MainActivity : ComponentActivity() {
         CreekManager.sInstance.eventReportListen {
 
         }
+
+        val keyId = "******"
+        val publicKey = "*************"
+
+        CreekManager.sInstance.ephemerisInit(keyId = keyId, publicKey = publicKey, model = {
+            return@ephemerisInit EphemerisGPSModel(
+                isVaild = true,
+                altitude = 10,
+                latitude = (22.312653 * 1000000).toInt(),
+                longitude = (114.027986 * 1000000).toInt()
+            )
+        })
+
         setContent {
             Creek_dial_androidTheme {
                 Surface(

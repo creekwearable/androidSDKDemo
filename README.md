@@ -15,7 +15,7 @@
     
     dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation 'com.example.creek_sdk:flutter_release:2.5'
+    implementation 'com.example.creek_sdk:flutter_release:2.7'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.google.protobuf:protobuf-javalite:4.0.0-rc-2'
     }
@@ -34,7 +34,7 @@
 
 ● Add resource pack CreekSDK.aar
 
-   [CreekSDK2.5.aar](https://creekwearable.github.io/static/andriodSDKVersion/2.5/CreekSDK2.5.aar)
+   [CreekSDK2.5.aar](https://creekwearable.github.io/static/andriodSDKVersion/2.7/CreekSDK2.7.aar)
 
 
 #### Step 2：Rights Profile
