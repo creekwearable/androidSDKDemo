@@ -34,7 +34,7 @@
 
 ● Add resource pack CreekSDK.aar
 
-   [CreekSDK2.5.aar](https://creekwearable.github.io/static/andriodSDKVersion/2.7/CreekSDK2.7.aar)
+   [CreekSDK2.7.aar](https://creekwearable.github.io/static/andriodSDKVersion/2.7/CreekSDK2.7.aar)
 
 
 #### Step 2：Rights Profile
