@@ -49,9 +49,9 @@ class CustomDialViewModel : ViewModel() {
     fun updateDialModel(newDialModel: DialParseModel) {
         _dialModel.value = newDialModel
         baseImage.value = newDialModel.previewImageBytes ?: ""
-
+        colorSelectedIndex.value = newDialModel.colorSelectIndex ?: 0
+        backgroundSelectedIndex.value = newDialModel.backgroundSelectIndex ?: 0
     }
-
 
     fun installDial() {
         Log.d("CustomDialViewModel", "installDial")
@@ -118,11 +118,18 @@ class CustomDialViewModel : ViewModel() {
     @Composable
     fun unzipFile(titleName: String, width: Int, height: Int, cornerRadius: Int) {
         val context = LocalContext.current
-        try {
-            val inputStream = context.assets.open("$titleName.zip")
-            unzipFileFromStream(context,inputStream, titleName,width, height, cornerRadius)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val fileManager = context.filesDir
+        val destinationDir = File(fileManager, "directory")
+        val current = File("${destinationDir.path}/${titleName}")
+        if(current.exists()){
+            parseDial(context = context,titleName=titleName,width=width,height=height,cornerRadius=cornerRadius)
+        }else{
+            try {
+                val inputStream = context.assets.open("$titleName.zip")
+                unzipFileFromStream(context,inputStream, titleName,width, height, cornerRadius)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }

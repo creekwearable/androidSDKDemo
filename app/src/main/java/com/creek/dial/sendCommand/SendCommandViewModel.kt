@@ -33,6 +33,7 @@ import com.example.proto.Contacts
 import com.example.proto.Deviceinfo
 import com.example.proto.Disturb
 import com.example.proto.Enums
+import com.example.proto.Findphone
 import com.example.proto.Focus
 import com.example.proto.Language
 import com.example.proto.Message
