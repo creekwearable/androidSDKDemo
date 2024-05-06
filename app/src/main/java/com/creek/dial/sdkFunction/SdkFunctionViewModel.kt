@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 class SdkFunctionViewModel : ViewModel() {
 
     val functionList = arrayListOf(
+        "requst contacts permission",
         "getLogPath",
         "Binding",
         "Get Device Information",

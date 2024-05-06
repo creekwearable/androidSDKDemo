@@ -26,6 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
@@ -51,9 +54,25 @@ import com.example.mylibrary.CreekManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(){
 
     private val REQUEST_BLUETOOTH_PERMISSION = 1
+
+    private val lifecycleObserver = object : LifecycleObserver {
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+        fun onResumed() {
+            // Activity resumed (i.e., app in foreground)
+            println("App in foreground")
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        fun onPaused() {
+            // Activity paused (i.e., app potentially in background)
+            println("App potentially in background")
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,8 +95,11 @@ class MainActivity : ComponentActivity() {
 
         }
 
-        val keyId = "******"
-        val publicKey = "*************"
+        CreekManager.sInstance.phoneBookInit()
+
+
+        val keyId = "uTrC63Xzn1WTOmoy"
+        val publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqXy5JMoKV3zxLJ/Zh5btCKLM7Dl+0nPATfXXo4I03gofKz1RcExEqPZ/yogmaCYMp41iSNgRiJ6RBF/BngDPrNW+TlxYpnXTe7sHZE7n2KpKjbrZytobZez/YiPx12deQ6seCVjd2DuSVLKTzAy1rResyTGzzNwJgZaP1F1bb8J6vghDQOUXY9I0mcrVDzkHPRWLxkBBAARTZnfU6qsgke3lv6UIAW8D/3bJxkFp0JZ/x0QMBzcScC41/PF+3TBfNR9vIWpQLijLhCXI7avl/80kNZOYM9elU8bEGa1wDSYWOuRT5i8z7vvvvwqX6GsHnCdJlHB3i+p5sCirsHpBawIDAQAB"
 
         CreekManager.sInstance.ephemerisInit(keyId = keyId, publicKey = publicKey, model = {
             return@ephemerisInit EphemerisGPSModel(
@@ -98,6 +120,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+
+
 
 
 

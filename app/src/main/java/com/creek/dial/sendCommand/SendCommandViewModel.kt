@@ -1,5 +1,6 @@
 package com.creek.dial.sendCommand
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -8,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import com.example.model.ActivityModel
@@ -866,6 +868,19 @@ class SendCommandViewModel {
                 }, failure = {_, m ->
                     responseText.value = m
                 })
+
+            }
+            "requst contacts permission" -> {
+                CreekManager.sInstance.checkPhoneBookPermissions { it ->
+                    Log.w("1","hahh")
+                    if(!it){
+                        ActivityCompat.requestPermissions(
+                            context as Activity, arrayOf(
+                                "android.permission.READ_CONTACTS",
+                            ), 1
+                        )
+                    }
+                }
 
             }
         }
