@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity(){
         fun onPaused() {
             // Activity paused (i.e., app potentially in background)
             println("App potentially in background")
+            CreekManager.sInstance.monitorPhone()
         }
     }
 

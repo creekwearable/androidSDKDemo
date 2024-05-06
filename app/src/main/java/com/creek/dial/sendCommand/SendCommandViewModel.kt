@@ -291,7 +291,16 @@ class SendCommandViewModel {
                     item.laterRemindRepeatTimes = 1
                     item.vibrateOnOff = true
                     item.name = ByteString.copyFrom("abc".toByteArray())
+                    if(model.fromTable().later_remind_min){
+                        item.laterRemindMin = 1
+
+                    }
                     data.addAlarmItem(item)
+                    if(model.fromTable().custom_name_list){
+                        data.addCustomNameList(ByteString.copyFrom("hello".toByteArray()))
+                        data.addCustomNameList(ByteString.copyFrom("hello2".toByteArray()))
+                    }
+
                     CreekManager.sInstance.setAlarm(model = data, {
                         responseText.value = "success"
                     }, failure = { c, m ->
@@ -871,6 +880,7 @@ class SendCommandViewModel {
 
             }
             "requst contacts permission" -> {
+                CreekManager.sInstance.requestPhoneBookPermissions {  }
                 CreekManager.sInstance.checkPhoneBookPermissions { it ->
                     Log.w("1","hahh")
                     if(!it){
