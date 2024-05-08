@@ -82,6 +82,7 @@ class SendCommandViewModel {
 //                        loddingState.value = false
 
                     })
+
             }
             "Sync" -> {
 //                loddingState.value = false
