@@ -46,6 +46,7 @@ class ScanDeviceViewModel : ViewModel() {
                   id = null,
                   code = null,
                   success = {
+                      connectDeviceId.value =  deviceId
                   },
                   failure = {
 

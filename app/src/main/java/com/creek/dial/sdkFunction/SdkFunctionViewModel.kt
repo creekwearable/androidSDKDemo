@@ -12,6 +12,7 @@ class SdkFunctionViewModel : ViewModel() {
         "Get Device Information",
         "Sync",
         "Upload",
+        "Upload(zip)",
         "Get Device Bluetooth Status",
         "Get Language",
         "Set Language",

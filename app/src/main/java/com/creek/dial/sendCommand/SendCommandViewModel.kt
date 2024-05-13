@@ -23,6 +23,7 @@ import com.example.model.PhoneModel
 import com.example.model.SleepModel
 import com.example.model.SportModel
 import com.example.model.StressModel
+import com.example.model.UpgradeModel
 import com.example.model.fromTable
 import com.example.mylibrary.CreekManager
 import com.example.mylibrary.SportTypeSerializer
@@ -122,6 +123,45 @@ class SendCommandViewModel {
                 }
 
             }
+            "Upload(zip)" -> {
+                CreekManager.sInstance.getOTAUpgradeVersion {
+                    Log.w("OTA", "OTA version:$it")
+                }
+                try {
+                    val inputStream = context.assets.open("titan.zip")
+                    // 使用 inputStream 处理资源数据
+                    var fileData: ByteArray = inputStream.readBytes()
+                    val decimalArray: IntArray =
+                        fileData.map { it.toInt() and 0xFF }.toIntArray()
+
+                    CreekManager.sInstance.getOTAUpgradeState(fileName = "titan.zip", fileData = decimalArray, model = {
+                        model: UpgradeModel ->
+                        Log.w("ota", "totalResource:${model.totalResource ?: 0}  step:${model.step ?: 0}")
+                        CreekManager.sInstance.upload(
+                            "titan.zip",
+                            decimalArray,
+                            uploadProgress = { progress ->
+                                responseText.value = "progress :$progress"
+                            },
+                            uploadSuccess = {
+                                responseText.value = "Success"
+                            },
+                            uploadFailure = { c, m ->
+                                responseText.value = "Failure"
+
+                            })
+                    } , failureArgument = {
+                        code, message ->
+                        Log.w("ota", "$message")
+                    })
+
+
+                    inputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+            }
             "phone book" -> {
                 var phone = PhoneModel(
                     "bean",
@@ -203,7 +243,10 @@ class SendCommandViewModel {
             "Get Device Information" -> {
                 CreekManager.sInstance.getFirmware({ model: Deviceinfo.protocol_device_info ->
 //                    loddingState.value = false
+
+
                     responseText.value = model.toString()
+
                     CreekManager.sInstance.getSNFirmware(model,{
                         Log.w("sn", "sn++++$it")
                     })
