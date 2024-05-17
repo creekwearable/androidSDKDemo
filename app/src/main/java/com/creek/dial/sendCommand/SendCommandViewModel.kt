@@ -511,6 +511,7 @@ class SendCommandViewModel {
                 item.curTemp = 30
                 item.curMaxTemp = 33
                 item.curMinTemp = 26
+                item.visibilityLevel = ByteString.copyFrom("hello".toByteArray())
                 model.addDetailDataItem(item)
                 CreekManager.sInstance.setWeather(model = model, {
                     responseText.value = "success"
