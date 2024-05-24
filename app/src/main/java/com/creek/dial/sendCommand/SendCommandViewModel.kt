@@ -512,6 +512,7 @@ class SendCommandViewModel {
                 item.curMaxTemp = 33
                 item.curMinTemp = 26
                 item.visibilityLevel = ByteString.copyFrom("hello".toByteArray())
+                item.atmosHpa = (1015.1*100).toInt()
                 model.addDetailDataItem(item)
                 CreekManager.sInstance.setWeather(model = model, {
                     responseText.value = "success"
@@ -923,9 +924,9 @@ class SendCommandViewModel {
                     responseText.value = m
                 })
 
+
             }
             "requst contacts permission" -> {
-                CreekManager.sInstance.requestPhoneBookPermissions {  }
                 CreekManager.sInstance.checkPhoneBookPermissions { it ->
                     Log.w("1","hahh")
                     if(!it){
@@ -936,6 +937,8 @@ class SendCommandViewModel {
                         )
                     }
                 }
+
+
 
             }
         }
