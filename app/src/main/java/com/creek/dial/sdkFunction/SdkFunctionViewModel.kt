@@ -38,6 +38,7 @@ class SdkFunctionViewModel : ViewModel() {
         "Set weather",
         "Incoming call configuration query",
         "Incoming call configuration settings",
+        "call remind",
         "Contacts query",
         "Contacts settings",
         "Exercise self-identification query",

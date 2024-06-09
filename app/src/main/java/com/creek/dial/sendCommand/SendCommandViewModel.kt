@@ -938,6 +938,18 @@ class SendCommandViewModel {
                     }
                 }
 
+            }
+            "call remind" -> {
+                var  operate =  Call.protocol_call_remind()
+                operate.contactName =  ByteString.copyFrom("bean".toByteArray())
+                operate.phoneNumber =  ByteString.copyFrom("12345678912".toByteArray())
+                CreekManager.sInstance.setCallReminder(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+
+
 
 
             }
