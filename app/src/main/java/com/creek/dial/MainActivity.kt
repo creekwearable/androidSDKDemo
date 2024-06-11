@@ -51,6 +51,8 @@ import com.creek.dial.sendCommand.SendCommandScreen
 import com.creek.dial.ui.theme.Creek_dial_androidTheme
 import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.CreekManager
+import com.example.proto.Call
+import com.example.proto.Enums
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
@@ -97,6 +99,12 @@ class MainActivity : ComponentActivity(){
         }
 
         CreekManager.sInstance.phoneBookInit()
+
+        CreekManager.sInstance.callStatusUpdate { model: Call.protocol_call_remind_status ->
+            if (model.status == Enums.call_status.RECEIVED_CALL){
+                ///Watch notification app rejects incoming call
+            }
+        }
 
 
         val keyId = "*********"
