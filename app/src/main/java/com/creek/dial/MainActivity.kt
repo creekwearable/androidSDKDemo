@@ -101,6 +101,7 @@ class MainActivity : ComponentActivity(){
         CreekManager.sInstance.phoneBookInit()
 
         CreekManager.sInstance.callStatusUpdate { model: Call.protocol_call_remind_status ->
+            Log.w("123456", model.toString())
             if (model.status == Enums.call_status.RECEIVED_CALL){
                 ///Watch notification app rejects incoming call
             }

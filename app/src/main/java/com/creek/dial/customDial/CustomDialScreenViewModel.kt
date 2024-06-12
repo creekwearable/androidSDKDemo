@@ -143,7 +143,10 @@ class CustomDialViewModel : ViewModel() {
         val zis = ZipInputStream(BufferedInputStream(inputStream))
         var entry = zis.nextEntry
         while(entry != null){
-            val current = File("${destinationDir.path}/${entry.name}")
+            var current = File("${destinationDir.path}/${entry.name}")
+            if (!current.path.contains(titleName)){
+                current = File("${destinationDir.path}/${titleName}/${entry.name}")
+            }
             if(entry.isDirectory){
                 current.mkdirs()
             }else{

@@ -941,8 +941,8 @@ class SendCommandViewModel {
             }
             "call remind" -> {
                 var  operate =  Call.protocol_call_remind()
-                operate.contactName =  ByteString.copyFrom("bean".toByteArray())
-                operate.phoneNumber =  ByteString.copyFrom("12345678912".toByteArray())
+                operate.contactName =  ByteString.copyFrom("wsl".toByteArray())
+                operate.phoneNumber =  ByteString.copyFrom("19200710249".toByteArray())
                 CreekManager.sInstance.setCallReminder(model = operate, success = {
                     responseText.value = "success"
                 }, failure = {_, m ->

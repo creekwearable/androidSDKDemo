@@ -10,7 +10,7 @@ class DialViewModel : ViewModel() {
     val circleDialSelected = mutableIntStateOf(0)
     val squareDialSelected = mutableIntStateOf(0)
 
-    val circleDialList = arrayListOf("fun061101_03","fun_061211_05_2","act06_1201_03")
+    val circleDialList = arrayListOf("cw06g_titad101_01","fun061101_03","fun_061211_05_2","act06_1201_03")
     val squareDialList = arrayListOf("acti06_2","func6_pink","casi001_01")
 
     fun chooseCircleDial(navController: NavHostController,index: Int) {
