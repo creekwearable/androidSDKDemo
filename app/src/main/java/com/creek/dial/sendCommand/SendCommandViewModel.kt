@@ -458,6 +458,7 @@ class SendCommandViewModel {
                 var item = Wordtime.protocol_world_time_item()
                 item.cityName = ByteString.copyFrom("shenzheng".toByteArray())
                 item.offestMin = 120
+                item.customMin = - 180
                 model.addWorldTimeItem(item)
                 CreekManager.sInstance.setWorldTime(model = model, {
                     responseText.value = "success"
