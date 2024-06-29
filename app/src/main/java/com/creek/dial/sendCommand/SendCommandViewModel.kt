@@ -20,6 +20,7 @@ import com.example.model.HeartRateModel
 import com.example.model.NoiseModel
 import com.example.model.OxygenModel
 import com.example.model.PhoneModel
+import com.example.model.ScanDeviceModel
 import com.example.model.SleepModel
 import com.example.model.SportModel
 import com.example.model.StressModel
@@ -528,7 +529,6 @@ class SendCommandViewModel {
                     responseText.value = m
                 })
 
-
             }
             "Incoming call configuration settings" -> {
                 var model = Call.protocol_call_switch()
@@ -949,8 +949,6 @@ class SendCommandViewModel {
                 }, failure = {_, m ->
                     responseText.value = m
                 })
-
-
 
 
             }
