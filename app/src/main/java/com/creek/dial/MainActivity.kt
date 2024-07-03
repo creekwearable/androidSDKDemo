@@ -50,6 +50,7 @@ import com.creek.dial.sdkFunction.SdkFunction
 import com.creek.dial.sendCommand.SendCommandScreen
 import com.creek.dial.ui.theme.Creek_dial_androidTheme
 import com.example.model.EphemerisGPSModel
+import com.example.mylibrary.BluetoothStateType
 import com.example.mylibrary.CreekManager
 import com.example.proto.Call
 import com.example.proto.Enums
@@ -96,6 +97,13 @@ class MainActivity : ComponentActivity(){
         }
         CreekManager.sInstance.eventReportListen {
 
+        }
+        CreekManager.sInstance.bluetoothStateListen { state : BluetoothStateType ->
+            if (state == BluetoothStateType.ON){
+                Log.w("123456", "Bluetooth is currently powered on and available to use")
+            }else if (state == BluetoothStateType.OFF){
+                Log.w("123456", "Bluetooth is currently powered off")
+            }
         }
 
         CreekManager.sInstance.phoneBookInit()
