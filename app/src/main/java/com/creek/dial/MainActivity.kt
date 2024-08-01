@@ -93,8 +93,7 @@ class MainActivity : ComponentActivity(){
         super.onCreate(savedInstanceState)
 
         CreekManager.sInstance.creekRegister(this)
-        CreekManager.sInstance.initSDK(CreekClientType.titan)
-
+        CreekManager.sInstance.initSDK()
         CreekManager.sInstance.listenDeviceState { status, deviceName ->
             Log.w("123456", "$status++++$deviceName")
         }

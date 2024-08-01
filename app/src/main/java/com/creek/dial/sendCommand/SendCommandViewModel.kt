@@ -63,7 +63,11 @@ import java.io.IOException
 import java.time.Instant
 import android.provider.Settings
 import androidx.core.content.ContextCompat
+import com.example.model.ContactsIconModel
+import com.example.model.ContactsTable
 import com.example.mylibrary.SyncServerType
+import java.io.FileInputStream
+import java.io.InputStream
 
 class SendCommandViewModel {
 
@@ -554,16 +558,64 @@ class SendCommandViewModel {
 
             }
             "Contacts settings" -> {
-                var model = Contacts.protocol_frequent_contacts_operate()
-                var item = Contacts.protocol_frequent_contacts_item()
-                item.phoneNumber = ByteString.copyFrom("12345678912".toByteArray())
-                item.contactName = ByteString.copyFrom("bean".toByteArray())
-                model.addContactsItem(item)
-                CreekManager.sInstance.setContacts(model = model, {
-                    responseText.value = "success"
+
+                CreekManager.sInstance.getContacts({ model: Contacts.protocol_frequent_contacts_inquire_reply ->
+                    var table = model.fromTable()
+                    if(table.contact_icon){
+                        val list = mutableListOf<ContactsIconModel>()
+                        val filePath = "/data/user/0/com.creek.dial/app_flutter/creek/activity_icon.png"
+                        var data = ContactsIconModel(phoneNum = "12345678912", path = filePath, w = model.contactIconWidth, h = model.contactIconHeight)
+                        var data2 = ContactsIconModel(phoneNum = "13420902894", path = filePath, w = model.contactIconWidth, h = model.contactIconHeight)
+                        list.add(data)
+                        list.add(data2)
+                        CreekManager.sInstance.encodeContacts(contactsIconModels = list, model = {
+                                data ->
+                            val decimalArray: IntArray =
+                                data.map { it.toInt() and 0xFF }.toIntArray()
+                            CreekManager.sInstance.upload(fileName = "icon.contact_icon", fileData = decimalArray,uploadProgress = {
+                                    progress: Int ->
+
+                            }, uploadSuccess = {
+                                var model = Contacts.protocol_frequent_contacts_operate()
+                                var item = Contacts.protocol_frequent_contacts_item()
+                                item.phoneNumber = ByteString.copyFrom("12345678912".toByteArray())
+                                item.contactName = ByteString.copyFrom("bean".toByteArray())
+                                var item2 = Contacts.protocol_frequent_contacts_item()
+                                item2.phoneNumber = ByteString.copyFrom("13420902894".toByteArray())
+                                item2.contactName = ByteString.copyFrom("bean2".toByteArray())
+                                model.addContactsItem(item)
+                                model.addContactsItem(item2)
+                                CreekManager.sInstance.setContacts(model = model, {
+                                    responseText.value = "success"
+                                }, failure = { _, m ->
+                                    responseText.value = m
+                                })
+                            }, uploadFailure = {
+                                    code: Int, message: String ->
+                                responseText.value = message
+                            })
+
+                        }, failure = {
+                            code: Int, message: String ->
+                        })
+
+                    }else{
+                        var model = Contacts.protocol_frequent_contacts_operate()
+                        var item = Contacts.protocol_frequent_contacts_item()
+                        item.phoneNumber = ByteString.copyFrom("12345678912".toByteArray())
+                        item.contactName = ByteString.copyFrom("bean".toByteArray())
+                        model.addContactsItem(item)
+                        CreekManager.sInstance.setContacts(model = model, {
+                            responseText.value = "success"
+                        }, failure = { _, m ->
+                            responseText.value = m
+                        })
+                    }
                 }, failure = { _, m ->
                     responseText.value = m
                 })
+
+
 
             }
             "Exercise self-identification query" -> {
