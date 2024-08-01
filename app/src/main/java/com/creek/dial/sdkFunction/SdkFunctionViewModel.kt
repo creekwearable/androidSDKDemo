@@ -78,7 +78,8 @@ class SdkFunctionViewModel : ViewModel() {
         "getFocus",
         "setFocus",
         "functionTable",
-
+        "requestNotification",
+        "requestSMSCallPhone"
         )
 
     fun chooseFunction(index: Int) {

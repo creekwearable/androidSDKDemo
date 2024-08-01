@@ -27,6 +27,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -54,7 +55,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/CreekSDK4.0.aar"))
+    implementation(files("libs/CreekSDK4.4.aar"))
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -67,13 +68,13 @@ dependencies {
     implementation("androidx.compose.material:material:1.6.3")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.2")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.3")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
-    implementation("com.example.creek_sdk:flutter_release:4.0")
+    implementation("com.example.creek_sdk:flutter_release:4.4")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
-
 
 
 }

@@ -1,9 +1,12 @@
 package com.creek.dial
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.telephony.SmsManager
+import android.telephony.SubscriptionManager
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -45,15 +48,19 @@ import com.creek.dial.dial.DialScreen
 import com.creek.dial.navigation.Dial
 import com.creek.dial.navigation.SdkFunction
 import com.creek.dial.navigation.tabRowScreens
+import com.creek.dial.notification.MyNotificationListenerService
 import com.creek.dial.scanDevice.ScanDeviceScreen
 import com.creek.dial.sdkFunction.SdkFunction
 import com.creek.dial.sendCommand.SendCommandScreen
 import com.creek.dial.ui.theme.Creek_dial_androidTheme
+import com.example.creek_blue_manage.LocalPhoneStateListener
 import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.BluetoothStateType
+import com.example.mylibrary.CreekClientType
 import com.example.mylibrary.CreekManager
 import com.example.proto.Call
 import com.example.proto.Enums
+import com.example.proto.Message
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
@@ -84,8 +91,10 @@ class MainActivity : ComponentActivity(){
 
         )
         super.onCreate(savedInstanceState)
+
         CreekManager.sInstance.creekRegister(this)
-        CreekManager.sInstance.initSDK()
+        CreekManager.sInstance.initSDK(CreekClientType.titan)
+
         CreekManager.sInstance.listenDeviceState { status, deviceName ->
             Log.w("123456", "$status++++$deviceName")
         }
@@ -115,6 +124,27 @@ class MainActivity : ComponentActivity(){
             }
         }
 
+        CreekManager.sInstance.messageReplyListen { model: Message.protocol_message_reply_send_operate ->
+            if (model.replyType == Enums.msg_reply_type.MSG_REPLY_CALL){
+                var phone = model.msgId.toStringUtf8().substring(1,model.msgId.count())
+                var slotId = model.msgId.toStringUtf8().substring(0,1)
+                sendSms(number = phone, message = model.sendContent.toStringUtf8(), slotId = slotId.toInt())
+            }else{
+                MyNotificationListenerService.getInstance()
+                    ?.sendReply(key = model.msgId.toStringUtf8(), replyMessage = model.sendContent.toStringUtf8())
+            }
+
+        }
+        CreekManager.sInstance.watchResetListen {
+            Log.w("watchResetListen", "The watch is in reset state")
+            CreekManager.sInstance.bindingDevice(Enums.bind_method.BIND_NORMAL, id = null,code = null,success = {
+
+            }, failure = {
+
+            })
+        }
+
+
 
         val keyId = "*********"
         val publicKey = "***********"
@@ -138,10 +168,6 @@ class MainActivity : ComponentActivity(){
                 }
             }
         }
-
-
-
-
 
 
          fun requestBluetoothPermissions() {
@@ -208,6 +234,40 @@ class MainActivity : ComponentActivity(){
             }
             return true
         }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    fun sendSms(number: String?, message: String?, slotId:Int?) {
+        val smsSelfPermission = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_PHONE_STATE
+        )
+        if(smsSelfPermission == PackageManager.PERMISSION_GRANTED){
+            if (number != null && message != null && slotId != null) {
+                val subscriptionManager =
+                    this!!.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+                val subscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
+                var foundSubscription = false
+                for (subscriptionInfo in subscriptionInfoList) {
+                    val simSlotIndex = subscriptionInfo.simSlotIndex
+                    if (simSlotIndex == slotId){
+                        val subscriptionId = subscriptionInfo.subscriptionId
+                        val smsManager = SmsManager.getSmsManagerForSubscriptionId(subscriptionId)
+                        smsManager.sendTextMessage(number, null, message, null, null)
+                        Log.d("SMS", "Message sent from SIM slot: $slotId")
+                        break
+                    }
+                }
+                if (!foundSubscription) {
+                    // If the specified card slot is not found, use the default SmsManager to send the SMS
+                    val defaultSmsManager = SmsManager.getDefault()
+                    defaultSmsManager.sendTextMessage(number, null, message, null, null)
+                    Log.d("SMS", "Default SMS Manager used to send message")
+                }
+            }
+        }
+
     }
 }
 

@@ -1,8 +1,10 @@
 package com.creek.dial.sendCommand
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -59,6 +61,9 @@ import com.google.protobuf.ByteString
 import java.io.File
 import java.io.IOException
 import java.time.Instant
+import android.provider.Settings
+import androidx.core.content.ContextCompat
+import com.example.mylibrary.SyncServerType
 
 class SendCommandViewModel {
 
@@ -687,7 +692,7 @@ class SendCommandViewModel {
             "Query activity data" -> {
                 CreekManager.sInstance.getActivityNewTimeData(
                     startTime = "2023-10-01",
-                    endTime = "2023-11-23"
+                    endTime = "2024-11-23"
                 ) { model: BaseModel<List<ActivityModel>> ->
 
                     responseText.value = model.data?.toList().toString()
@@ -949,9 +954,33 @@ class SendCommandViewModel {
                 }, failure = {_, m ->
                     responseText.value = m
                 })
+            }
+            "requestNotification" -> {
+                val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                startActivity(context,intent,null)
+            }
+
+            "requestSMSCallPhone" -> {
+                val permissions = arrayOf(
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.RECEIVE_SMS,
+                    Manifest.permission.SEND_SMS,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.READ_CALL_LOG
+                )
+                val permissionsToRequest = permissions.filter {
+                    context?.let { ctx -> ContextCompat.checkSelfPermission(ctx, it) } != PackageManager.PERMISSION_GRANTED
+                }
+                if (permissionsToRequest.isNotEmpty()) {
+                    ActivityCompat.requestPermissions(context as Activity,
+                        permissionsToRequest.toTypedArray(), 123)
+                }
+
 
 
             }
+
+
         }
     }
 }
