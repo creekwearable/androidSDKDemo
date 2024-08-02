@@ -88,28 +88,13 @@ class LocalPhoneStateListener internal constructor( private val context: Context
                 if (callType == null)
                     callType = CallType.OUTGOING
 
-                // Get current time to use later to calculate the duration of the call
-//                time = ZonedDateTime.now()
-//                previousState = TelephonyManager.CALL_STATE_OFFHOOK
-//                var simSlot: Int = getSimSlotForIncomingCall(context) //获取SIM卡槽信息
-//                if (callType == CallType.OUTGOING) {
-//                    sendToWatch(CallEvent.OUTGOINGSTART, 0, incomingNumber!!,simSlot,context)
-//                } else {
-//                    sendToWatch(CallEvent.INCOMINGRECEIVED, 0, incomingNumber!!,simSlot,context)
-//                }
             }
 
             TelephonyManager.CALL_STATE_RINGING -> {
-
                 Log.d(
                     "LocalPhoneStateListener",
                     "Phone State event PHONE_RINGING number: $incomingNumber"
                 )
-//                callType = CallType.INCOMING
-//                previousState = TelephonyManager.CALL_STATE_RINGING
-//                var simSlot: Int = getSimSlotForIncomingCall(context) //获取SIM卡槽信息
-//                Log.d("CallReceiver", "Incoming call from123333:  SIM slot: $simSlot")
-//                sendToWatch(CallEvent.INCOMINGSTART, 0,incomingNumber!!,simSlot,context)
             }
         }
     }

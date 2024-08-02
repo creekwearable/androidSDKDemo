@@ -43,14 +43,12 @@ class MyNotificationListenerService : NotificationListenerService() {
         val extras = notification.extras
         val title = extras.getString("android.title")
         val text = extras.getCharSequence("android.text")
-
         val isForeground = (sbn.notification.flags and Notification.FLAG_FOREGROUND_SERVICE) != 0
         val isFlagNOClear = sbn.notification.flags and Notification.FLAG_NO_CLEAR != 0
         if (isForeground && isFlagNOClear) {
-            Log.i("NotificationListener", "onNotificationPosted----过滤-flags:-${sbn.notification.flags}")
+            Log.i("NotificationListener", "onNotificationPosted----filter-flags:-${sbn.notification.flags}")
             return
         }
-
         Log.i("NotificationListener", "Notification from $packageName: $title - $text")
         var msgId = ""
         if (notification.actions != null) {
