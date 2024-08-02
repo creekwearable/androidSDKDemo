@@ -514,6 +514,28 @@ class SendCommandViewModel {
                     responseText.value = m
                 })
             }
+
+            "getMessageReply" -> {
+
+                CreekManager.sInstance.getMessageReply({
+                    model: Message.protocol_message_reply_list_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = {
+                    c,m ->
+                    responseText.value = m
+                })
+            }
+            "setMessageReply" -> {
+                var model = Message.protocol_message_reply_list_operate()
+                model.addCallingReplyItems(ByteString.copyFrom("hello11111".toByteArray()))
+                model.addMsgReplyItems(ByteString.copyFrom("hello22222".toByteArray()))
+                CreekManager.sInstance.setMessageReply(model = model, {
+                    responseText.value = "success"
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+
             "Set weather" -> {
                 var model = Weather.protocol_weather_operate()
                 model.switchFlag = true

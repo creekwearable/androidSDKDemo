@@ -35,6 +35,8 @@ class SdkFunctionViewModel : ViewModel() {
         "Message switch query",
         "Message switch setting",
         "Message content setting",
+        "getMessageReply",
+        "setMessageReply",
         "Set weather",
         "Incoming call configuration query",
         "Incoming call configuration settings",
