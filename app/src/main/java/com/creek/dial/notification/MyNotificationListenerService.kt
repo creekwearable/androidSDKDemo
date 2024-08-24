@@ -109,7 +109,6 @@ class MyNotificationListenerService : NotificationListenerService() {
             val bundle = Bundle()
             bundle.putCharSequence(notification.remoteInput.resultKey, replyMessage)
             RemoteInput.addResultsToIntent(arrayOf(notification.remoteInput), intent, bundle)
-
             try {
                 notification.action.actionIntent.send(this, 0, intent)
                 Log.i("NotificationListener", "Replied to ${notification.packageName} with message: $replyMessage")

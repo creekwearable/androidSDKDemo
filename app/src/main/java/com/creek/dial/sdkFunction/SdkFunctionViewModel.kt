@@ -81,7 +81,8 @@ class SdkFunctionViewModel : ViewModel() {
         "setFocus",
         "functionTable",
         "requestNotification",
-        "requestSMSCallPhone"
+        "requestSMSCallPhone",
+        "setSmsToWatchState"
         )
 
     fun chooseFunction(index: Int) {

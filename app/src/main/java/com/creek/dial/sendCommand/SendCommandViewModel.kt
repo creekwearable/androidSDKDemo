@@ -1036,12 +1036,11 @@ class SendCommandViewModel {
 
             "requestSMSCallPhone" -> {
                 val permissions = arrayOf(
-                    Manifest.permission.CALL_PHONE,
-                    Manifest.permission.RECEIVE_SMS,
                     Manifest.permission.SEND_SMS,
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.READ_CALL_LOG
                 )
+
                 val permissionsToRequest = permissions.filter {
                     context?.let { ctx -> ContextCompat.checkSelfPermission(ctx, it) } != PackageManager.PERMISSION_GRANTED
                 }
@@ -1049,8 +1048,10 @@ class SendCommandViewModel {
                     ActivityCompat.requestPermissions(context as Activity,
                         permissionsToRequest.toTypedArray(), 123)
                 }
+            }
 
-
+            "setSmsToWatchState" -> {
+                CreekManager.sInstance.setSmsToWatchState(state = true)
 
             }
 
