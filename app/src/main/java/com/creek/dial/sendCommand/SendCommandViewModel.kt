@@ -65,6 +65,7 @@ import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.example.model.ContactsIconModel
 import com.example.model.ContactsTable
+import com.example.model.DialPhotoParseModel
 import com.example.mylibrary.SyncServerType
 import java.io.FileInputStream
 import java.io.InputStream
@@ -80,6 +81,8 @@ class SendCommandViewModel {
 //        loddingState.value = true
         when (title) {
             "Binding" -> {
+                
+                
                 CreekManager.sInstance.bindingDevice(
                     bindType = Enums.bind_method.BIND_NORMAL,
                     id = null,
@@ -254,12 +257,42 @@ class SendCommandViewModel {
                 CreekManager.sInstance.getFirmware({ model: Deviceinfo.protocol_device_info ->
 //                    loddingState.value = false
 
+//
+//                    responseText.value = model.toString()
+//
+//                    CreekManager.sInstance.getSNFirmware(model,{
+//                        Log.w("sn", "sn++++$it")
+//                    })
 
-                    responseText.value = model.toString()
+                    val filePath = "/data/user/0/com.creek.dial/app_flutter/creek/1"
+                    CreekManager.sInstance.parsePhotoDial(path = filePath, width = model.sizeInfo.width, height = model.sizeInfo.height, radius = model.sizeInfo.angle, platformType = model.platform, model = {
+                        model: DialPhotoParseModel ->
 
-                    CreekManager.sInstance.getSNFirmware(model,{
-                        Log.w("sn", "sn++++$it")
+                        CreekManager.sInstance.setCurrentPhotoColor(photoSelectIndex = model.photoSelectIndex!!, selectIndex = 7, model = {
+                            CreekManager.sInstance.encodePhotoDial { arr: ByteArray ->
+                                val decimalArray: IntArray =
+                                    arr.map { it.toInt() and 0xFF }.toIntArray()
+
+                                CreekManager.sInstance.upload(
+                                    "photo.bin",
+                                    decimalArray,
+                                    uploadProgress = { progress ->
+                                        responseText.value = "progress :$progress"
+                                    },
+                                    uploadSuccess = {
+                                        responseText.value = "Success"
+                                    },
+                                    uploadFailure = { c, m ->
+                                        responseText.value = "Failure"
+
+                                    })
+                            }
+                        })
+
+
                     })
+                                                   
+                                                   
 
                 }, failure = { c, m ->
 //                    loddingState.value = false
@@ -585,11 +618,13 @@ class SendCommandViewModel {
                     var table = model.fromTable()
                     if(table.contact_icon){
                         val list = mutableListOf<ContactsIconModel>()
-                        val filePath = "/data/user/0/com.creek.dial/app_flutter/creek/activity_icon.png"
-                        var data = ContactsIconModel(phoneNum = "12345678912", path = filePath, w = model.contactIconWidth, h = model.contactIconHeight)
-                        var data2 = ContactsIconModel(phoneNum = "13420902894", path = filePath, w = model.contactIconWidth, h = model.contactIconHeight)
-                        list.add(data)
-                        list.add(data2)
+                        val filePath = "/data/user/0/com.creek.dial/app_flutter/creek/1/firmware/background/background_0_0565.png"
+
+                        for (i in 0 until 10) {
+                            var data = ContactsIconModel(phoneNum = "1234567891${i}", path = filePath, w = model.contactIconWidth, h = model.contactIconHeight, quality = if (table.contact_icon_lz4) 10 else 100,isLz4 = if (table.contact_icon_lz4) 1 else 0)
+                            list.add(data)
+                        }
+
                         CreekManager.sInstance.encodeContacts(contactsIconModels = list, model = {
                                 data ->
                             val decimalArray: IntArray =
@@ -599,14 +634,12 @@ class SendCommandViewModel {
 
                             }, uploadSuccess = {
                                 var model = Contacts.protocol_frequent_contacts_operate()
-                                var item = Contacts.protocol_frequent_contacts_item()
-                                item.phoneNumber = ByteString.copyFrom("12345678912".toByteArray())
-                                item.contactName = ByteString.copyFrom("bean".toByteArray())
-                                var item2 = Contacts.protocol_frequent_contacts_item()
-                                item2.phoneNumber = ByteString.copyFrom("13420902894".toByteArray())
-                                item2.contactName = ByteString.copyFrom("bean2".toByteArray())
-                                model.addContactsItem(item)
-                                model.addContactsItem(item2)
+                                for (i in 0 until 10) {
+                                    var item = Contacts.protocol_frequent_contacts_item()
+                                    item.phoneNumber = ByteString.copyFrom("1234567891${i}".toByteArray())
+                                    item.contactName = ByteString.copyFrom("bean${i}".toByteArray())
+                                    model.addContactsItem(item)
+                                }
                                 CreekManager.sInstance.setContacts(model = model, {
                                     responseText.value = "success"
                                 }, failure = { _, m ->
@@ -818,8 +851,8 @@ class SendCommandViewModel {
 
             "Query blood oxygen data" -> {
                 CreekManager.sInstance.getSpoNewTimeData(
-                    startTime = "2023-08-01",
-                    endTime = "2023-09-01"
+                    startTime = "2024-11-20",
+                    endTime = "2024-11-20"
                 ) { model: BaseModel<List<OxygenModel>> ->
                     responseText.value = model.data?.toList().toString()
 
@@ -841,8 +874,8 @@ class SendCommandViewModel {
             }
             "Range query exercise record" -> {
                 CreekManager.sInstance.getSportTimeData(
-                    startTime = "2023-08-01",
-                    endTime = "2023-11-20",
+                    startTime = "2024-11-20",
+                    endTime = "2024-11-20",
                     type = null
                 ) { model: BaseModel<List<SportModel>> ->
                     val gson = GsonBuilder()
