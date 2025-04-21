@@ -65,8 +65,14 @@ import android.provider.Settings
 import androidx.core.content.ContextCompat
 import com.example.model.ContactsIconModel
 import com.example.model.ContactsTable
+import com.example.model.CourseModel
 import com.example.model.DialPhotoParseModel
+import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.SyncServerType
+import com.example.proto.Calendar
+import com.example.proto.Geo
+import com.example.proto.Morning
+import com.example.proto.Music
 import java.io.FileInputStream
 import java.io.InputStream
 
@@ -81,8 +87,7 @@ class SendCommandViewModel {
 //        loddingState.value = true
         when (title) {
             "Binding" -> {
-                
-                
+
                 CreekManager.sInstance.bindingDevice(
                     bindType = Enums.bind_method.BIND_NORMAL,
                     id = null,
@@ -255,47 +260,13 @@ class SendCommandViewModel {
             }
             "Get Device Information" -> {
                 CreekManager.sInstance.getFirmware({ model: Deviceinfo.protocol_device_info ->
-//                    loddingState.value = false
 
-//
-//                    responseText.value = model.toString()
-//
-//                    CreekManager.sInstance.getSNFirmware(model,{
-//                        Log.w("sn", "sn++++$it")
-//                    })
-
-                    val filePath = "/data/user/0/com.creek.dial/app_flutter/creek/1"
-                    CreekManager.sInstance.parsePhotoDial(path = filePath, width = model.sizeInfo.width, height = model.sizeInfo.height, radius = model.sizeInfo.angle, platformType = model.platform, model = {
-                        model: DialPhotoParseModel ->
-
-                        CreekManager.sInstance.setCurrentPhotoColor(photoSelectIndex = model.photoSelectIndex!!, selectIndex = 7, model = {
-                            CreekManager.sInstance.encodePhotoDial { arr: ByteArray ->
-                                val decimalArray: IntArray =
-                                    arr.map { it.toInt() and 0xFF }.toIntArray()
-
-                                CreekManager.sInstance.upload(
-                                    "photo.bin",
-                                    decimalArray,
-                                    uploadProgress = { progress ->
-                                        responseText.value = "progress :$progress"
-                                    },
-                                    uploadSuccess = {
-                                        responseText.value = "Success"
-                                    },
-                                    uploadFailure = { c, m ->
-                                        responseText.value = "Failure"
-
-                                    })
-                            }
-                        })
-
-
+                    responseText.value = model.toString()
+                    CreekManager.sInstance.getSNFirmware(model,{
+                        Log.w("sn", "sn++++$it")
                     })
-                                                   
-                                                   
 
                 }, failure = { c, m ->
-//                    loddingState.value = false
                     responseText.value = m
                 })
 
@@ -682,13 +653,13 @@ class SendCommandViewModel {
 
             }
             "Exercise self-identification settings" -> {
-                var model = Sport.protocol_exercise_intelligent_recognition()
-                model.walkTypeSwitch = true
-                CreekManager.sInstance.setSportIdentification(model = model, {
-                    responseText.value = "success"
-                }, failure = { _, m ->
-                    responseText.value = m
-                })
+//                var model = Sport.protocol_exercise_intelligent_recognition()
+//                model. = true
+//                CreekManager.sInstance.setSportIdentification(model = model, {
+//                    responseText.value = "success"
+//                }, failure = { _, m ->
+//                    responseText.value = m
+//                })
             }
             "Exercise sub-item data query" -> {
                 CreekManager.sInstance.getSportSub({ model: Sport.protocol_exercise_sporting_param_sort_inquire_reply ->
@@ -870,6 +841,16 @@ class SendCommandViewModel {
                     responseText.value = model.data?.toString().toString()
 
                 }
+               var  operate = Findphone.protocol_find_phone_watch_operate()
+                operate.findWatchFlag = true
+                operate.findWatchSwitch = true
+
+
+                CreekManager.sInstance.setFindPhoneWatch(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
 
             }
             "Range query exercise record" -> {
@@ -1040,15 +1021,24 @@ class SendCommandViewModel {
 
             }
             "requst contacts permission" -> {
+
+
+//              if(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)  {
+//                  Log.w("11111","true")
+//              }else{
+//                  Log.w("22222","false")
+//              }
+
                 CreekManager.sInstance.checkPhoneBookPermissions { it ->
+                    Log.w("333333",it.toString())
                     Log.w("1","hahh")
-                    if(!it){
-                        ActivityCompat.requestPermissions(
-                            context as Activity, arrayOf(
-                                "android.permission.READ_CONTACTS",
-                            ), 1
-                        )
-                    }
+//                    if(!it){
+//                        ActivityCompat.requestPermissions(
+//                            context as Activity, arrayOf(
+//                                "android.permission.READ_CONTACTS",
+//                            ), 1
+//                        )
+//                    }
                 }
 
             }

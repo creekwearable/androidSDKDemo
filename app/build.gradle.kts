@@ -55,8 +55,8 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/CreekSDK5.0.aar"))
-    implementation("com.example.creek_sdk:flutter_release:5.0")
+    implementation(files("libs/CreekSDK5.2.aar"))
+    implementation("com.example.creek_sdk:flutter_release:5.2")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -64,8 +64,8 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.02.02"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.7.8")
+    implementation("androidx.compose.material3:material3:1.3.2")
     implementation("androidx.compose.material:material:1.6.3")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -75,6 +75,27 @@ dependencies {
     implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
-
+    implementation("com.google.accompanist:accompanist-permissions:0.30.1")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.4.0")
 
 }
+
+//configurations.all {
+//    resolutionStrategy {
+//        force("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
+//        force("com.google.protobuf:protobuf-java:3.22.3")
+//    }
+//}
+//dependencies {
+//    implementation("com.example.creek_sdk:flutter_release:5.0") {
+//        // exclude unnecessary protobuf-java
+//        exclude(group = "com.google.protobuf", module = "protobuf-java")
+//    }
+//}
+////Other libraries
+//dependencies {
+//    implementation("io.coil-kt:coil-compose:2.6.0") {
+//        // exclude unnecessary protobuf-javalite
+//        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
+//    }
+//}

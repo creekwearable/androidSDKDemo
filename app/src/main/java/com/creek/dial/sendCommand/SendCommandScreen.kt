@@ -1,6 +1,8 @@
 package com.creek.dial.sendCommand
 
+import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,14 +43,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mylibrary.CreekManager
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun SendCommandScreen(navController: NavHostController, functionStr: String) {
 
     val viewModel = SendCommandViewModel()
     val context = LocalContext.current
+    val contactsPermissionState = rememberPermissionState(permission = Manifest.permission.READ_CONTACTS)
 
     Scaffold(
         topBar = {
@@ -87,8 +95,24 @@ fun SendCommandScreen(navController: NavHostController, functionStr: String) {
                     horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
-                    Button(onClick = { viewModel.sendCommand(functionStr, context = context) }) {
+                    Button(onClick = {
+                        if(functionStr == "requst contacts permission"){
+                            contactsPermissionState.launchPermissionRequest()
+                        }else{
+                            viewModel.sendCommand(functionStr, context = context)
+                        }
+                    }) {
                         Text("Send Command")
+                    }
+                    when {
+                        contactsPermissionState.status.isGranted -> {
+                            Log.w("authorize", "User agrees to authorize")
+                            CreekManager.sInstance.monitorPhone()
+                        }
+
+                        else -> {
+
+                        }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 

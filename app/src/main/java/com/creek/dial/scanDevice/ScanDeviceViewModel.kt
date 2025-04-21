@@ -33,7 +33,7 @@ class ScanDeviceViewModel : ViewModel() {
             deviceList.clear()
             deviceList.addAll(model)
         } ,endScan = {
-
+            Log.w("111","jjjj")
         })
     }
 

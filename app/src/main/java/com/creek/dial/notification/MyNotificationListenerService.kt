@@ -2,22 +2,25 @@ package com.creek.dial.notification
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.RemoteInput
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationManagerCompat
 import com.example.mylibrary.CreekManager
 import com.example.proto.Enums
 import com.example.proto.Message
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.digest.DigestUtils
 import com.google.protobuf.ByteString
+import com.notification_listener_util.music.CreekMediaControllerUtils
 import java.util.Base64
 
-class MyNotificationListenerService : NotificationListenerService() {
-
+ class MyNotificationListenerService : NotificationListenerService() {
 
 
     private val replyableNotifications = mutableMapOf<String, ReplyableNotification>()
@@ -30,9 +33,24 @@ class MyNotificationListenerService : NotificationListenerService() {
         }
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        if(isNotificationListenerEnabled(applicationContext)){
+            val mAudioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            CreekMediaControllerUtils.getInstance().initMediaSessionManager(applicationContext, mAudioManager,this::class.java.name)
+        }
+        return START_STICKY
+    }
+
+    fun isNotificationListenerEnabled(context: Context): Boolean {
+        val packageNames = NotificationManagerCompat.getEnabledListenerPackages(context)
+        return packageNames.contains(context.packageName)
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -121,6 +139,8 @@ class MyNotificationListenerService : NotificationListenerService() {
             Log.e("NotificationListener", "Notification with key $key not found")
         }
     }
+
+
 }
 
 data class ReplyableNotification(

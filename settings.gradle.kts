@@ -14,7 +14,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven(uri("$storageUrl/download.flutter.io"))
-        maven(uri("https://creekwearable.github.io/static/titan"))
+        maven(uri("https://creekwearable.github.io/static/repo"))
     }
 }
 

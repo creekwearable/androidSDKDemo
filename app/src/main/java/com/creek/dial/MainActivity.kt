@@ -3,6 +3,7 @@ package com.creek.dial
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SmsManager
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -45,6 +47,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.creek.dial.customDial.CustomDialScreen
 import com.creek.dial.dial.DialScreen
+import com.creek.dial.music.MusicUploadScreen
 import com.creek.dial.navigation.Dial
 import com.creek.dial.navigation.SdkFunction
 import com.creek.dial.navigation.tabRowScreens
@@ -58,15 +61,19 @@ import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.BluetoothStateType
 import com.example.mylibrary.CreekClientType
 import com.example.mylibrary.CreekManager
+import com.example.mylibrary.eventIdType
 import com.example.proto.Call
 import com.example.proto.Enums
 import com.example.proto.Message
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.notification_listener_util.music.CreekMediaControllerUtils
+import kotlin.math.round
 
 class MainActivity : ComponentActivity(){
 
     private val REQUEST_BLUETOOTH_PERMISSION = 1
+
 
     private val lifecycleObserver = object : LifecycleObserver {
 
@@ -83,7 +90,10 @@ class MainActivity : ComponentActivity(){
             CreekManager.sInstance.monitorPhone()
         }
     }
-
+    fun isNotificationListenerEnabled(context: Context): Boolean {
+        val packageNames = NotificationManagerCompat.getEnabledListenerPackages(context)
+        return packageNames.contains(context.packageName)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +101,11 @@ class MainActivity : ComponentActivity(){
 
         )
         super.onCreate(savedInstanceState)
+        var mAudioManager: AudioManager? = null
+        if(isNotificationListenerEnabled(applicationContext)){
+            mAudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            CreekMediaControllerUtils.getInstance().initMediaSessionManager(applicationContext, mAudioManager,this::class.java.name)
+        }
 
         CreekManager.sInstance.creekRegister(this)
         CreekManager.sInstance.initSDK()
@@ -99,6 +114,38 @@ class MainActivity : ComponentActivity(){
         }
         CreekManager.sInstance.noticeUpdateListen {
             Log.w("123456", it.toString())
+
+            if (it.eventId == eventIdType.EVENT_ID_MUSIC_CONTROL){
+              when(it.eventKey){
+                  0 ->{
+                      CreekMediaControllerUtils.getInstance().startPlayMusic()
+                  }
+                  1 ->{
+                      CreekMediaControllerUtils.getInstance().pauseMusic()
+                  }
+                  2 ->{
+                      CreekMediaControllerUtils.getInstance().previousSong()
+                  }
+                  3 ->{
+                      CreekMediaControllerUtils.getInstance().nextSong()
+                  }
+                  4 ->{
+                      Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
+                      val maxVolume: Int = CreekMediaControllerUtils.getInstance().mMediaController!!.playbackInfo?.maxVolume ?: mAudioManager?.getStreamMaxVolume(
+                          AudioManager.STREAM_MUSIC
+                      ) ?: 0
+
+                      CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume + 0.1)
+                  }
+                  5 ->{
+                      val maxVolume: Int = CreekMediaControllerUtils.getInstance().mMediaController!!.playbackInfo?.maxVolume ?: mAudioManager?.getStreamMaxVolume(
+                          AudioManager.STREAM_MUSIC
+                      ) ?: 0
+                      Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
+                      CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume - 0.1)
+                  }
+              }
+            }
         }
         CreekManager.sInstance.exceptionListen {
             Log.w("123456", it)
@@ -317,6 +364,10 @@ fun MainScreen() {
             composable("scanDevice",) {
                 ScanDeviceScreen(navController)
             }
+
+            composable("music",) {
+                MusicUploadScreen(navController)
+            }
         }
     }
 }
@@ -398,7 +449,13 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
 
         SdkFunction(
             chooseFunction = { functionStr ->
-                navController.navigate("sendCommand/$functionStr")
+                if (functionStr == "Upload Music"){
+                    navController.navigate("music")
+                }else{
+                    navController.navigate("sendCommand/$functionStr")
+                }
+
+
             },
             scanDevice = {
 

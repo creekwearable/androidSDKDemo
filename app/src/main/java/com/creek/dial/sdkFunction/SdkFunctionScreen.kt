@@ -1,6 +1,7 @@
 package com.creek.dial.sdkFunction
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
@@ -85,6 +86,7 @@ fun SdkFunction(chooseFunction: (String) -> Unit, scanDevice: () -> Unit) {
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
                         .clickable {
+                            Log.d("Navigation", viewModel.functionList[index])
                             chooseFunction(viewModel.functionList[index])
                         }
                 )

@@ -66,7 +66,7 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-        <receiver android:name="com.creek.dial.notification.CreekPhoneStateReceiver"
+        <receiver android:name="com.example.creek_blue_manage.CreekPhoneStateReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
