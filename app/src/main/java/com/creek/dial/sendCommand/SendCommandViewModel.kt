@@ -104,7 +104,7 @@ class SendCommandViewModel {
 
             }
             "Sync" -> {
-//                loddingState.value = false
+                loddingState.value = false
                 CreekManager.sInstance.sync(syncSuccess = {
                     responseText.value = "Success"
                 }, syncFailure = {

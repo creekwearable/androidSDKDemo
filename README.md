@@ -15,7 +15,8 @@
     
     dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation 'com.example.creek_sdk:flutter_release:5.2'
+    implementation 'com.example.creek_sdk:flutter_release:5.3'
+    implementation("creek_aar:creek_aar_release:5.3")
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.google.protobuf:protobuf-javalite:4.0.0-rc-2'
     }
@@ -35,6 +36,10 @@
 ● Add resource pack CreekSDK.aar
 
    [CreekSDK5.2.aar](https://creekwearable.github.io/static/andriodSDKVersion/5.2/CreekSDK5.2.aar)
+   
+After version 5.3, the CreekSDK.aar file has been moved to the git repository. You only need to implement("creek_aar:creek_aar_release:#viersin"), and the CreekSDK.aar file does not need to be downloaded to the project.
+
+   
 
 
 #### Step 2：Rights Profile
