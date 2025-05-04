@@ -55,8 +55,8 @@ android {
 }
 
 dependencies {
-    implementation("com.example.creek_sdk:flutter_release:5.3")
-    implementation("creek_aar:creek_aar_release:5.3")
+    implementation("com.example.creek_sdk:flutter_release:5.5")
+    implementation("creek_aar:creek_aar_release:5.5")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

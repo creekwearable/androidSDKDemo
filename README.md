@@ -14,11 +14,12 @@
 ##### build.gradle
     
     dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation 'com.example.creek_sdk:flutter_release:5.3'
-    implementation("creek_aar:creek_aar_release:5.3")
-    implementation 'com.google.code.gson:gson:2.8.8'
-    implementation 'com.google.protobuf:protobuf-javalite:4.0.0-rc-2'
+    ///************Key library files
+    implementation("com.example.creek_sdk:flutter_release:5.5")
+    implementation("creek_aar:creek_aar_release:5.5")
+    ///*********************
+    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
     }
 ##### settings.gradle
 
