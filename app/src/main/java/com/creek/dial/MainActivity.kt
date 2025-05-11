@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -59,6 +60,7 @@ import com.creek.dial.ui.theme.Creek_dial_androidTheme
 import com.example.creek_blue_manage.LocalPhoneStateListener
 import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.BluetoothStateType
+import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.CreekClientType
 import com.example.mylibrary.CreekManager
 import com.example.mylibrary.eventIdType
@@ -68,11 +70,23 @@ import com.example.proto.Message
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.notification_listener_util.music.CreekMediaControllerUtils
+import kotlinx.coroutines.delay
+import okio.Timeout
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.math.round
 
 class MainActivity : ComponentActivity(){
 
     private val REQUEST_BLUETOOTH_PERMISSION = 1
+
+    @Composable
+    fun OneTimeTimer(onTimeout: () -> Unit) {
+        LaunchedEffect(Unit) {
+            delay(1000) // 延迟1秒
+            onTimeout() // 执行一次
+        }
+    }
 
 
     private val lifecycleObserver = object : LifecycleObserver {
@@ -107,101 +121,102 @@ class MainActivity : ComponentActivity(){
             CreekMediaControllerUtils.getInstance().initMediaSessionManager(applicationContext, mAudioManager,this::class.java.name)
         }
 
-        CreekManager.sInstance.creekRegister(this)
-        CreekManager.sInstance.initSDK()
-        CreekManager.sInstance.listenDeviceState { status, deviceName ->
-            Log.w("123456", "$status++++$deviceName")
-        }
-        CreekManager.sInstance.noticeUpdateListen {
-            Log.w("123456", it.toString())
-
-            if (it.eventId == eventIdType.EVENT_ID_MUSIC_CONTROL){
-              when(it.eventKey){
-                  0 ->{
-                      CreekMediaControllerUtils.getInstance().startPlayMusic()
-                  }
-                  1 ->{
-                      CreekMediaControllerUtils.getInstance().pauseMusic()
-                  }
-                  2 ->{
-                      CreekMediaControllerUtils.getInstance().previousSong()
-                  }
-                  3 ->{
-                      CreekMediaControllerUtils.getInstance().nextSong()
-                  }
-                  4 ->{
-                      Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
-                      val maxVolume: Int = CreekMediaControllerUtils.getInstance().mMediaController!!.playbackInfo?.maxVolume ?: mAudioManager?.getStreamMaxVolume(
-                          AudioManager.STREAM_MUSIC
-                      ) ?: 0
-
-                      CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume + 0.1)
-                  }
-                  5 ->{
-                      val maxVolume: Int = CreekMediaControllerUtils.getInstance().mMediaController!!.playbackInfo?.maxVolume ?: mAudioManager?.getStreamMaxVolume(
-                          AudioManager.STREAM_MUSIC
-                      ) ?: 0
-                      Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
-                      CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume - 0.1)
-                  }
-              }
+        CreekManager.sInstance.creekRegister(this, completed = {
+            CreekManager.sInstance.initSDK()
+            CreekManager.sInstance.listenDeviceState { status, deviceName ->
+                Log.w("123456", "$status++++$deviceName")
             }
-        }
-        CreekManager.sInstance.exceptionListen {
-            Log.w("123456", it)
-        }
-        CreekManager.sInstance.eventReportListen {
+//            CreekManager.sInstance.externalConnect(id = "F4:4E:FD:A6:23:C8", connect = {
+//                Log.w("123456", "🌹🌹🌹" + it.toString())
+//            })
+            CreekManager.sInstance.noticeUpdateListen {
+                Log.w("123456", it.toString())
 
-        }
-        CreekManager.sInstance.bluetoothStateListen { state : BluetoothStateType ->
-            if (state == BluetoothStateType.ON){
-                Log.w("123456", "Bluetooth is currently powered on and available to use")
-            }else if (state == BluetoothStateType.OFF){
-                Log.w("123456", "Bluetooth is currently powered off")
+                if (it.eventId == eventIdType.EVENT_ID_MUSIC_CONTROL){
+                    when(it.eventKey){
+                        0 ->{
+                            CreekMediaControllerUtils.getInstance().startPlayMusic()
+                        }
+                        1 ->{
+                            CreekMediaControllerUtils.getInstance().pauseMusic()
+                        }
+                        2 ->{
+                            CreekMediaControllerUtils.getInstance().previousSong()
+                        }
+                        3 ->{
+                            CreekMediaControllerUtils.getInstance().nextSong()
+                        }
+                        4 ->{
+                            Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
+                            val maxVolume: Int = CreekMediaControllerUtils.getInstance().mMediaController!!.playbackInfo?.maxVolume ?: mAudioManager?.getStreamMaxVolume(
+                                AudioManager.STREAM_MUSIC
+                            ) ?: 0
+
+                            CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume + 0.1)
+                        }
+                        5 ->{
+                            val maxVolume: Int = CreekMediaControllerUtils.getInstance().mMediaController!!.playbackInfo?.maxVolume ?: mAudioManager?.getStreamMaxVolume(
+                                AudioManager.STREAM_MUSIC
+                            ) ?: 0
+                            Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
+                            CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume - 0.1)
+                        }
+                    }
+                }
             }
-        }
-
-        CreekManager.sInstance.phoneBookInit()
-
-        CreekManager.sInstance.callStatusUpdate { model: Call.protocol_call_remind_status ->
-            Log.w("123456", model.toString())
-            if (model.status == Enums.call_status.RECEIVED_CALL){
-                ///Watch notification app rejects incoming call
+            CreekManager.sInstance.exceptionListen {
+                Log.w("123456", it)
             }
-        }
+            CreekManager.sInstance.eventReportListen {
 
-        CreekManager.sInstance.messageReplyListen { model: Message.protocol_message_reply_send_operate ->
-            if (model.replyType == Enums.msg_reply_type.MSG_REPLY_CALL){
-                var phone = model.msgId.toStringUtf8().substring(1,model.msgId.count())
-                var slotId = model.msgId.toStringUtf8().substring(0,1)
-                sendSms(number = phone, message = model.sendContent.toStringUtf8(), slotId = slotId.toInt())
-            }else{
-                MyNotificationListenerService.getInstance()
-                    ?.sendReply(key = model.msgId.toStringUtf8(), replyMessage = model.sendContent.toStringUtf8())
+            }
+            CreekManager.sInstance.bluetoothStateListen { state : BluetoothStateType ->
+                if (state == BluetoothStateType.ON){
+                    Log.w("123456", "Bluetooth is currently powered on and available to use")
+                }else if (state == BluetoothStateType.OFF){
+                    Log.w("123456", "Bluetooth is currently powered off")
+                }
             }
 
-        }
-        CreekManager.sInstance.watchResetListen {
-            Log.w("watchResetListen", "The watch is in reset state")
-            CreekManager.sInstance.bindingDevice(Enums.bind_method.BIND_NORMAL, id = null,code = null,success = {
+            CreekManager.sInstance.phoneBookInit()
 
-            }, failure = {
+            CreekManager.sInstance.callStatusUpdate { model: Call.protocol_call_remind_status ->
+                Log.w("123456", model.toString())
+                if (model.status == Enums.call_status.RECEIVED_CALL){
+                    ///Watch notification app rejects incoming call
+                }
+            }
+            CreekManager.sInstance.messageReplyListen { model: Message.protocol_message_reply_send_operate ->
+                if (model.replyType == Enums.msg_reply_type.MSG_REPLY_CALL){
+                    var phone = model.msgId.toStringUtf8().substring(1,model.msgId.count())
+                    var slotId = model.msgId.toStringUtf8().substring(0,1)
+                    sendSms(number = phone, message = model.sendContent.toStringUtf8(), slotId = slotId.toInt())
+                }else{
+                    MyNotificationListenerService.getInstance()
+                        ?.sendReply(key = model.msgId.toStringUtf8(), replyMessage = model.sendContent.toStringUtf8())
+                }
 
+            }
+            CreekManager.sInstance.watchResetListen {
+                Log.w("watchResetListen", "The watch is in reset state")
+                CreekManager.sInstance.bindingDevice(Enums.bind_method.BIND_NORMAL, id = null,code = null,success = {
+
+                }, failure = {
+
+                })
+            }
+            val keyId = "*********"
+            val publicKey = "***********"
+
+            CreekManager.sInstance.ephemerisInit(keyId = keyId, publicKey = publicKey, model = {
+                return@ephemerisInit EphemerisGPSModel(
+                    isVaild = true,
+                    altitude = 10,
+                    latitude = (22.312653 * 1000000).toInt(),
+                    longitude = (114.027986 * 1000000).toInt()
+                )
             })
-        }
 
-
-
-        val keyId = "*********"
-        val publicKey = "***********"
-
-        CreekManager.sInstance.ephemerisInit(keyId = keyId, publicKey = publicKey, model = {
-            return@ephemerisInit EphemerisGPSModel(
-                isVaild = true,
-                altitude = 10,
-                latitude = (22.312653 * 1000000).toInt(),
-                longitude = (114.027986 * 1000000).toInt()
-            )
         })
 
         setContent {

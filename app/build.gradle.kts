@@ -7,6 +7,18 @@ android {
     namespace = "com.creek.dial"
     compileSdk = 34
 
+    packaging {
+        dex {
+            useLegacyPackaging = true
+        }
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.creek.dial"
         minSdk = 24
@@ -18,6 +30,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+        }
+
     }
 
     buildTypes {
@@ -47,16 +63,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
-    implementation("com.example.creek_sdk:flutter_release:5.7")
-    implementation("creek_aar:creek_aar_release:5.7")
+    implementation("com.example.creek_sdk:flutter_release:5.8")
+    implementation("creek_aar:creek_aar_release:5.8")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -75,27 +86,6 @@ dependencies {
     implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
-    implementation("com.google.accompanist:accompanist-permissions:0.30.1")
     implementation ("androidx.compose.runtime:runtime-livedata:1.4.0")
 
 }
-
-//configurations.all {
-//    resolutionStrategy {
-//        force("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
-//        force("com.google.protobuf:protobuf-java:3.22.3")
-//    }
-//}
-//dependencies {
-//    implementation("com.example.creek_sdk:flutter_release:5.0") {
-//        // exclude unnecessary protobuf-java
-//        exclude(group = "com.google.protobuf", module = "protobuf-java")
-//    }
-//}
-////Other libraries
-//dependencies {
-//    implementation("io.coil-kt:coil-compose:2.6.0") {
-//        // exclude unnecessary protobuf-javalite
-//        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
-//    }
-//}

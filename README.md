@@ -15,8 +15,8 @@
     
     dependencies {
     ///************Key library files
-    implementation("com.example.creek_sdk:flutter_release:5.7")
-    implementation("creek_aar:creek_aar_release:5.7")
+    implementation("com.example.creek_sdk:flutter_release:5.8")
+    implementation("creek_aar:creek_aar_release:5.8")
     ///*********************
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
