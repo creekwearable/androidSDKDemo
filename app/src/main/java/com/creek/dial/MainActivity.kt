@@ -61,6 +61,7 @@ import com.example.creek_blue_manage.LocalPhoneStateListener
 import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.BluetoothStateType
 import com.example.mylibrary.CancelAutoConnectType
+import com.example.mylibrary.ConnectionStatus
 import com.example.mylibrary.CreekClientType
 import com.example.mylibrary.CreekManager
 import com.example.mylibrary.eventIdType
@@ -109,6 +110,10 @@ class MainActivity : ComponentActivity(){
         return packageNames.contains(context.packageName)
     }
 
+    fun isConnected(): Boolean {
+        return CreekManager.sInstance.connectStatus in setOf(ConnectionStatus.CONNECT, ConnectionStatus.SYNC, ConnectionStatus.SYNC_COMPLETE)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
@@ -122,7 +127,7 @@ class MainActivity : ComponentActivity(){
         }
 
         CreekManager.sInstance.creekRegister(this, completed = {
-            CreekManager.sInstance.initSDK()
+            CreekManager.sInstance.initSDK(cancelAutoConnect = CancelAutoConnectType.cancel)
             CreekManager.sInstance.listenDeviceState { status, deviceName ->
                 Log.w("123456", "$status++++$deviceName")
             }
@@ -444,6 +449,7 @@ fun BottomBar(navController: NavController) {
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPermissionsApi::class)
 fun NavGraphBuilder.homeGraph(navController: NavHostController) {
 
@@ -469,6 +475,8 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 }else{
                     navController.navigate("sendCommand/$functionStr")
                 }
+
+//                WeatherCommand().setWeather()
 
 
             },

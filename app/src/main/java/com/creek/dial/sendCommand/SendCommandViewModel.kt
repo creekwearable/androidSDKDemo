@@ -73,6 +73,7 @@ import com.example.proto.Calendar
 import com.example.proto.Geo
 import com.example.proto.Morning
 import com.example.proto.Music
+import com.example.proto.WatchSensor
 import java.io.FileInputStream
 import java.io.InputStream
 
@@ -963,6 +964,7 @@ class SendCommandViewModel {
                 operate.startMinute = 0
                 operate.endHour = 18
                 operate.endMinute = 0
+                operate.addAllRepeat(listOf(true,true,true,true,true,true,true))
                 CreekManager.sInstance.setWater(model = operate, success = {
                     responseText.value = "success"
                 }, failure = {_, m ->
@@ -1076,6 +1078,30 @@ class SendCommandViewModel {
             "setSmsToWatchState" -> {
                 CreekManager.sInstance.setSmsToWatchState(state = true)
 
+            }
+            "Get Watch Sensor" -> {
+                CreekManager.sInstance.getWatchSensor({ model ->
+                    responseText.value = model.toString()
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+            "Set Watch Sensor" -> {
+                val  operate =  WatchSensor.protocol_watch_sensors_operate()
+                operate.heartRateAllSwitch = Enums.switch_type.SWITCH_OFF
+                operate.bloodOxygenAllSwitch = Enums.switch_type.SWITCH_ON
+                CreekManager.sInstance.setWatchSensor(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+            "Get Water Assistant" -> {
+                CreekManager.sInstance.getWatchSensor({ model ->
+                    responseText.value = model.toString()
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
             }
 
 

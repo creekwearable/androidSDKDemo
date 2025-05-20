@@ -67,6 +67,7 @@ class MusicUploadViewModel(application: Application) : AndroidViewModel(applicat
 
 
     fun startUpload() {
+
         fileDta?.let {
             CreekManager.sInstance.uploadMusic(musicModel = CreekMusicModel(songName = songName, singer = singer,), fileData = it, uploadProgress = { progress: Int ->
               Log.w("uploadMusic",progress.toString())
