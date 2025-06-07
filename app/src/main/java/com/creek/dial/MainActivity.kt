@@ -68,6 +68,7 @@ import com.example.mylibrary.eventIdType
 import com.example.proto.Call
 import com.example.proto.Enums
 import com.example.proto.Message
+import com.example.xfyun_speech.XfyunSpeechPlugin
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.notification_listener_util.music.CreekMediaControllerUtils
@@ -125,9 +126,9 @@ class MainActivity : ComponentActivity(){
             mAudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             CreekMediaControllerUtils.getInstance().initMediaSessionManager(applicationContext, mAudioManager,this::class.java.name)
         }
-
         CreekManager.sInstance.creekRegister(this, completed = {
-            CreekManager.sInstance.initSDK(cancelAutoConnect = CancelAutoConnectType.cancel)
+
+            CreekManager.sInstance.initSDK()
             CreekManager.sInstance.listenDeviceState { status, deviceName ->
                 Log.w("123456", "$status++++$deviceName")
             }
@@ -212,6 +213,8 @@ class MainActivity : ComponentActivity(){
             }
             val keyId = "*********"
             val publicKey = "***********"
+            
+            CreekManager.sInstance.aiVoiceConfig(keyId = keyId, publicKey = publicKey)
 
             CreekManager.sInstance.ephemerisInit(keyId = keyId, publicKey = publicKey, model = {
                 return@ephemerisInit EphemerisGPSModel(

@@ -116,30 +116,47 @@ class SendCommandViewModel {
 
             }
             "Upload" -> {
-                try {
-                    val inputStream = context.assets.open("res.ota")
-                    // 使用 inputStream 处理资源数据
-                    var fileData: ByteArray = inputStream.readBytes()
-                    val decimalArray: IntArray =
-                        fileData.map { it.toInt() and 0xFF }.toIntArray()
-//                    loddingState.value = false
-                    CreekManager.sInstance.upload(
-                        "res.ota",
-                        decimalArray,
-                        uploadProgress = { progress ->
-                            responseText.value = "progress :$progress"
-                        },
-                        uploadSuccess = {
-                            responseText.value = "Success"
-                        },
-                        uploadFailure = { c, m ->
-                            responseText.value = "Failure"
+//                try {
+//                    val inputStream = context.assets.open("ewr01_noise_fw_ota_2025060522_v0.0.11_no_music.ota")
+//                    // 使用 inputStream 处理资源数据
+//                    var fileData: ByteArray = inputStream.readBytes()
+//                    val decimalArray = IntArray(fileData.size)
+//                    for (i in fileData.indices) {
+//                        decimalArray[i] = fileData[i].toInt() and 0xFF
+//                    }
+////                    loddingState.value = false
+//                    CreekManager.sInstance.upload(
+//                        "ewr01_noise_fw_ota_2025060522_v0.0.11_no_music.ota",
+//                        decimalArray,
+//                        uploadProgress = { progress ->
+//                            responseText.value = "progress :$progress"
+//                        },
+//                        uploadSuccess = {
+//                            responseText.value = "Success"
+//                        },
+//                        uploadFailure = { c, m ->
+//                            responseText.value = "Failure"
+//
+//                        })
+//                    inputStream.close()
+//                } catch (e: IOException) {
+//                    e.printStackTrace()
+//                }
 
-                        })
-                    inputStream.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+                val filePath = "/data/user/0/com.creek.dial/app_flutter/creek/ewr01_noise_fw_ota_2025060522_v0.0.11_no_music.ota"
+                CreekManager.sInstance.uploadWithFilePath(
+                    fileName = "ewr01_noise_fw_ota_2025060522_v0.0.11_no_music.ota",
+                    filePath = "/data/user/0/com.creek.dial/app_flutter/creek/ewr01_noise_fw_ota_2025060522_v0.0.11_no_music.ota",
+                    uploadProgress = { progress ->
+                        responseText.value = "progress :$progress"
+                    },
+                    uploadSuccess = {
+                        responseText.value = "Success"
+                    },
+                    uploadFailure = { c, m ->
+                        responseText.value = "Failure"
+
+                    })
 
             }
             "Upload(zip)" -> {
