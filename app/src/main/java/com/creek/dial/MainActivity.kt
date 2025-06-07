@@ -137,7 +137,6 @@ class MainActivity : ComponentActivity(){
 //            })
             CreekManager.sInstance.noticeUpdateListen {
                 Log.w("123456", it.toString())
-
                 if (it.eventId == eventIdType.EVENT_ID_MUSIC_CONTROL){
                     when(it.eventKey){
                         0 ->{
