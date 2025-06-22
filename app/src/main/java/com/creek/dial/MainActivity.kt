@@ -210,10 +210,28 @@ class MainActivity : ComponentActivity(){
 
                 })
             }
-            val keyId = "*********"
+            val keyId = "********"
             val publicKey = "***********"
             
             CreekManager.sInstance.aiVoiceConfig(keyId = keyId, publicKey = publicKey)
+            CreekManager.sInstance.setAiVoiceCountry(countryCode = "US")
+            CreekManager.sInstance.setAiVoiceCity(cityName = "shengzhen")
+
+            CreekManager.sInstance.liveSportDataListen { model ->
+                println(model.toString())
+            }
+            CreekManager.sInstance.liveSportControlListen { model ->
+                println(model.toString())
+            }
+
+//            CreekManager.sInstance.setSportControl(
+//                controlType = Enums.exercise_control_type.CONTROL_RESUME, success = {
+//                    println("setSportControl success")
+//                }, failure = {
+//                     c,m ->
+//                    println("setSportControl failure")
+//                }
+//            )
 
             CreekManager.sInstance.ephemerisInit(keyId = keyId, publicKey = publicKey, model = {
                 return@ephemerisInit EphemerisGPSModel(
