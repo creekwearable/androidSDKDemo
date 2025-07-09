@@ -24,7 +24,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,9 +38,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.res.TypedArrayUtils.getResourceId
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.unit.sp
+import com.creek.dial.navigateToVideoDialScreen
 import androidx.navigation.NavHostController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun DialScreen(navController: NavHostController) {
@@ -50,6 +59,30 @@ fun DialScreen(navController: NavHostController) {
             .background(color = Color(0xFFE7E8EA)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // 顶部栏，右上角按钮
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = "Dial",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            actions = {
+                TextButton(onClick = {
+                    // 跳转到视频表盘页面，参数可根据实际需求调整
+                    navController.navigateToVideoDialScreen(
+                        titleName = "video",
+                        width = 466,
+                        height = 466,
+                        cornerRadius = 233
+                    )
+                }) {
+                    Text("video")
+                }
+            },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors()
+        )
 
         Spacer(Modifier.size(15.dp))
         Card(

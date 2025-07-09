@@ -408,6 +408,30 @@ fun MainScreen() {
             composable("music",) {
                 MusicUploadScreen(navController)
             }
+
+            // 添加 videoDial 路由
+            composable(
+                "videoDial/{titleName}/{width}/{height}/{cornerRadius}",
+                arguments = listOf(
+                    navArgument("titleName") { type = NavType.StringType },
+                    navArgument("width") { type = NavType.IntType },
+                    navArgument("height") { type = NavType.IntType },
+                    navArgument("cornerRadius") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val titleName = backStackEntry.arguments?.getString("titleName") ?: ""
+                val width = backStackEntry.arguments?.getInt("width") ?: 0
+                val height = backStackEntry.arguments?.getInt("height") ?: 0
+                val cornerRadius = backStackEntry.arguments?.getInt("cornerRadius") ?: 0
+                com.creek.dial.videoDial.VideoDialScreen(
+                    navController = navController,
+                    titleName = titleName,
+                    width = width,
+                    height = height,
+                    cornerRadius = cornerRadius
+                )
+            }
+
         }
     }
 }
@@ -519,6 +543,15 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
     }
 
 
+}
+
+fun NavController.navigateToVideoDialScreen(
+    titleName: String,
+    width: Int,
+    height: Int,
+    cornerRadius: Int
+) {
+    this.navigate("videoDial/$titleName/$width/$height/$cornerRadius")
 }
 
 
