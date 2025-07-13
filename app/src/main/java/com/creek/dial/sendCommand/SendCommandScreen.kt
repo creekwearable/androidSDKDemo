@@ -46,6 +46,7 @@ import androidx.navigation.NavHostController
 import com.example.mylibrary.CreekManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 
@@ -57,6 +58,12 @@ fun SendCommandScreen(navController: NavHostController, functionStr: String) {
     val viewModel = SendCommandViewModel()
     val context = LocalContext.current
     val contactsPermissionState = rememberPermissionState(permission = Manifest.permission.READ_CONTACTS)
+    val calendarPermissionState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.READ_CALENDAR,
+            Manifest.permission.WRITE_CALENDAR
+        )
+    )
 
     Scaffold(
         topBar = {
@@ -83,16 +90,15 @@ fun SendCommandScreen(navController: NavHostController, functionStr: String) {
                 },
             )
         }) { paddingValue ->
-        BoxWithConstraints {
-            Box(modifier = Modifier.padding(paddingValue)) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = Color.White)
-                        .padding(16.dp),
+        Box(modifier = Modifier.padding(paddingValue)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.White)
+                    .padding(16.dp),
 
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
                     Button(onClick = {
@@ -110,44 +116,39 @@ fun SendCommandScreen(navController: NavHostController, functionStr: String) {
                             CreekManager.sInstance.monitorPhone()
                         }
 
-                        else -> {
+                    else -> {
 
-                        }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    OutlinedTextField(
-                        enabled = false,
-                        shape = RoundedCornerShape(corner = CornerSize(5.dp)),
-                        value = viewModel.responseText.value,
-                        onValueChange = { },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                            .weight(1f),
-
-                        )
                 }
-            }
-            if (viewModel.loddingState.value){
-                Box(
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    enabled = false,
+                    shape = RoundedCornerShape(corner = CornerSize(5.dp)),
+                    value = viewModel.responseText.value,
+                    onValueChange = { },
                     modifier = Modifier
-                        .align(Alignment.Center) // 确保加载框在屏幕上居中
-                        .fillMaxSize(), // 使加载框填充整个屏幕大小
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .weight(1f),
 
+                    )
+            }
+        }
+        if (viewModel.loddingState.value){
+            Box(
+                modifier = Modifier.fillMaxSize(), // 填充全屏
+                contentAlignment = Alignment.Center // 子内容居中
+            ) {
+                Surface(
+                    modifier = Modifier.wrapContentSize(),
+                    color = Color.Gray
                 ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Surface(
-                            modifier = Modifier.wrapContentSize(),
-                            color = Color.Gray
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
+                    CircularProgressIndicator()
                 }
             }
-
         }
+
 
     }
 

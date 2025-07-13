@@ -242,6 +242,11 @@ class MainActivity : ComponentActivity(){
                 )
             })
 
+            CreekManager.sInstance.calendarConfig(timerMinute = 10, systemCalendarName = "CREEK", isSupport = true, model = {
+                msg ->
+                Log.w("calendarConfig", msg)
+            })
+
         })
 
         setContent {
@@ -253,72 +258,6 @@ class MainActivity : ComponentActivity(){
                     MainScreen()
                 }
             }
-        }
-
-
-         fun requestBluetoothPermissions() {
-            val permissions = arrayOf(
-                // Manifest.permission.BLUETOOTH,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_ADVERTISE,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.ACCESS_MEDIA_LOCATION
-
-            )
-
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_BLUETOOTH_PERMISSION)
-        }
-
-         fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
-        ) {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-            if (requestCode == REQUEST_BLUETOOTH_PERMISSION) {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 用户授予了蓝牙权限，可以执行相关操作
-
-                } else {
-                    // 用户拒绝了蓝牙权限，可以显示一条提示信息或执行其他操作
-                    //  Toast.makeText(this, "拒绝了蓝牙权限所以不能扫描设备", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-         fun hasBluetoothPermissions(): Boolean {
-            //compileSdkVersion项目中编译SDK版本大于30申请以下权限可使用
-            //Manifest.permission.BLUETOOTH_SCAN、Manifest.permission.BLUETOOTH_ADVERTISE、Manifest.permission.BLUETOOTH_CONNECT
-            //若小于30可以直接使用权限对应的字符串
-            if (Build.VERSION.SDK_INT > 30) {
-                if ((ContextCompat.checkSelfPermission(
-                        this,
-                        "android.permission.BLUETOOTH_SCAN"
-                    ) != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(
-                        this, "android.permission.BLUETOOTH_ADVERTISE"
-                    )
-                            != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(
-                        this, "android.permission.ACCESS_COARSE_LOCATION"
-                    )
-                            != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(
-                        this,
-                        "android.permission.BLUETOOTH_CONNECT"
-                    ) != PackageManager.PERMISSION_GRANTED)
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this, arrayOf(
-                            "android.permission.BLUETOOTH_SCAN",
-                            "android.permission.BLUETOOTH_ADVERTISE",
-                            "android.permission.BLUETOOTH_CONNECT"
-                        ), REQUEST_BLUETOOTH_PERMISSION
-                    )
-                    return false
-                }
-            }
-            return true
         }
 
     }
