@@ -15,6 +15,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
         maven(uri("$storageUrl/download.flutter.io"))
+        maven(uri("/Users/bean/Documents/项目/creek_sdk_flutter/build/host/outputs/repo"))
         maven(uri("https://creekwearable.github.io/static/repo"))
     }
 }

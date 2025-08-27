@@ -26,6 +26,7 @@ class CreekMediaControllerUtils {
     private var mContext: Context? = null
     private var isActivityMediaSessionManager = false
     private var volumeChangeReceiver: VolumeChangeReceiver? = null
+    private var lastStatus: Int = -1
 
     companion object {
         @JvmStatic
@@ -129,11 +130,6 @@ class CreekMediaControllerUtils {
     fun setVolume(volume: Double): Boolean {
         if (mMediaController != null) {
             var volumePercentage = 0.0
-//            if (volume > 1) {
-//                volumePercentage = 1.0
-//            } else if (volume < 0) {
-//                volumePercentage = 0.0
-//            }
             volumePercentage = volume
             val maxVolumeTemp = mMediaController!!.playbackInfo?.maxVolume
             val maxVolumeTemp2 = mAudioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
@@ -170,46 +166,42 @@ class CreekMediaControllerUtils {
     }
 
     private fun sendMusicInfoToWatch(musicBean: MusicBean) {
-//        if (laseMusicBean == null) {
-//            laseMusicBean = musicBean
-//
-//            //发送音乐消息
-//           // NotificationMethodChannel.sendMusicEvent(mapTemp, mContext)
-//            var operate =  Music.protocol_music_control_operate()
-//            operate.switchFlag  = true
-//            if (musicBean.getPlayState() == 2) {
-//                operate.status = Enums.music_status.MUSIC_STATUS_PAUSE;
-//            } else {
-//                operate.status = Enums.music_status.MUSIC_STATUS_PLAY;
-//            }
-//            operate.totalTime = ((musicBean.getTotalPosMs() ?: 0) / 1000).toInt()
-//            operate.curTime = ((musicBean.getCurrentPosMs() ?: 0) / 1000).toInt()
-//            operate.musicName = ByteString.copyFrom(musicBean.getMusicName()?.toByteArray())
-//            operate.singerName = ByteString.copyFrom(musicBean.getSingerName()?.toByteArray())
-//            operate.volume = getVolume()
-//            CreekManager.sInstance.setMusic(model = operate, success = {
-//
-//            }, failure = {_, m ->
-//
-//            })
-//        }
-        laseMusicBean = musicBean
+        val currentStatus = musicBean.getPlayState()
+        val isResumeFromPause = lastStatus == 2 && currentStatus == 3 // Resume from pause
+        // Determine whether the content is consistent (curTime and totalTime are ignored)
+        val isSameContent = laseMusicBean?.let {
+            it.getMusicName() == musicBean.getMusicName()
+                    && it.getSingerName() == musicBean.getSingerName()
+                    && it.getPlayState() == musicBean.getPlayState()
+                    && it.getCurrentVolume() == musicBean.getCurrentVolume()
+        } ?: false
 
-        //发送音乐消息
-        // NotificationMethodChannel.sendMusicEvent(mapTemp, mContext)
-        var operate =  Music.protocol_music_control_operate()
-        operate.switchFlag  = true
-        if (musicBean.getPlayState() == 2) {
-            operate.status = Enums.music_status.MUSIC_STATUS_PAUSE;
-        } else {
-            operate.status = Enums.music_status.MUSIC_STATUS_PLAY;
+        //If the content is the same and not resumed from pause, no need to send
+        if (isSameContent && !isResumeFromPause) {
+            return
         }
-        operate.totalTime = ((musicBean.getTotalPosMs() ?: 0) / 1000).toInt()
-        operate.curTime = ((musicBean.getCurrentPosMs() ?: 0) / 1000).toInt()
-        operate.musicName = ByteString.copyFrom(musicBean.getMusicName()?.toByteArray())
-        operate.singerName = ByteString.copyFrom(musicBean.getSingerName()?.toByteArray())
-        val maxVolumeTemp = mMediaController!!.playbackInfo?.maxVolume
-        operate.volume = getVolume() * (100/ (maxVolumeTemp?: 0))
+        // update status
+        laseMusicBean = musicBean
+        if (currentStatus != null) {
+            lastStatus = currentStatus
+        }
+
+        val operate = Music.protocol_music_control_operate().apply {
+            switchFlag = true
+            status = if (musicBean.getPlayState() == 2)
+                Enums.music_status.MUSIC_STATUS_PAUSE
+            else
+                Enums.music_status.MUSIC_STATUS_PLAY
+
+            totalTime = ((musicBean.getTotalPosMs() ?: 0) / 1000).toInt()
+            curTime = ((musicBean.getCurrentPosMs() ?: 0) / 1000).toInt()
+
+            musicName = ByteString.copyFrom(musicBean.getMusicName()?.toByteArray())
+            singerName = ByteString.copyFrom(musicBean.getSingerName()?.toByteArray())
+
+            val maxVolume = mMediaController?.playbackInfo?.maxVolume ?: 1
+            volume = getVolume() * (100 / maxVolume)
+        }
         CreekManager.sInstance.setMusic(model = operate, success = {
 
         }, failure = {_, m ->

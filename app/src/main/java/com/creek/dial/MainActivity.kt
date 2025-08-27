@@ -3,6 +3,8 @@ package com.creek.dial
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -46,6 +48,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.arthenica.ffmpegkit.FFmpegKit
 import com.creek.dial.customDial.CustomDialScreen
 import com.creek.dial.dial.DialScreen
 import com.creek.dial.music.MusicUploadScreen
@@ -64,6 +67,7 @@ import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.ConnectionStatus
 import com.example.mylibrary.CreekClientType
 import com.example.mylibrary.CreekManager
+import com.example.mylibrary.VoiceDialType
 import com.example.mylibrary.eventIdType
 import com.example.proto.Call
 import com.example.proto.Enums
@@ -74,8 +78,15 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.notification_listener_util.music.CreekMediaControllerUtils
 import kotlinx.coroutines.delay
 import okio.Timeout
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import java.util.Timer
 import java.util.TimerTask
+import java.util.logging.Handler
 import kotlin.math.round
 
 class MainActivity : ComponentActivity(){
@@ -129,10 +140,34 @@ class MainActivity : ComponentActivity(){
         CreekManager.sInstance.creekRegister(this, completed = {
 
             CreekManager.sInstance.initSDK()
+            val keyId = "c5zUyyx5IUKn9j6BZ"
+            val publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmPAevf7MpvCWF3q60S7GaDY2HNDOwyVXkIpTVQVIJcHMUg1v1muHeaSgLO76KR2NIk1qN3iLgt6WmIHJWAMlanAAzkUWCixaNRlJxE3OjZCv6GgFEdSSIIA7cj/cwmqUcqthNVP1Vmp89DTY7Ah08UBpyXfjZGJBxpBkIssl35eCvSVBv8Miil8Meb2kWgoZLPNATr8WS+shvD1pIKOjmTktslHUqfxpYMST35H0tYFmzexTftrl5iPVtzd/VKMnIGS6yDWNiy/6DXCQYNfy6NgqDOVtubldW+Xv6OtLDO4My1Jlp+xG2TUUI3sZMV3glB338O6ZfEmA48X4bM7AcwIDAQAB"
+            CreekManager.sInstance.initGlobalConfig(keyId, publicKey)
+            CreekManager.sInstance.ephemerisListen {
+              val model =  EphemerisGPSModel(
+                    isVaild = true,
+                    altitude = 10,
+                    latitude = (22.312653 * 1000000).toInt(),
+                    longitude = (114.027986 * 1000000).toInt()
+                )
+                CreekManager.sInstance.updateEphemeris(model = model, success = {
+                    Log.w("123456", "updateEphemeris success")
+                }, failure = {
+                    c,m ->
+                    Log.w("123456", "updateEphemeris failure")
+                })
+            }
             CreekManager.sInstance.listenDeviceState { status, deviceName ->
                 Log.w("123456", "$status++++$deviceName")
             }
-//            CreekManager.sInstance.externalConnect(id = "F4:4E:FD:A6:23:C8", connect = {
+//            CreekManager.sInstance.externalConnect(id = "F4:4E:FD:64:0B:44", connect = {
+//                CreekManager.sInstance.getAuthorizationCode(model = {
+//                    str ->
+//                    CreekManager.sInstance.saveBindDevice()
+//                }, failure = {
+//                    c,m ->
+//                })
+//
 //                Log.w("123456", "🌹🌹🌹" + it.toString())
 //            })
             CreekManager.sInstance.noticeUpdateListen {
@@ -200,8 +235,9 @@ class MainActivity : ComponentActivity(){
                     MyNotificationListenerService.getInstance()
                         ?.sendReply(key = model.msgId.toStringUtf8(), replyMessage = model.sendContent.toStringUtf8())
                 }
-
             }
+
+
             CreekManager.sInstance.watchResetListen {
                 Log.w("watchResetListen", "The watch is in reset state")
                 CreekManager.sInstance.bindingDevice(Enums.bind_method.BIND_NORMAL, id = null,code = null,success = {
@@ -210,12 +246,11 @@ class MainActivity : ComponentActivity(){
 
                 })
             }
-            val keyId = "********"
-            val publicKey = "***********"
-            
+
             CreekManager.sInstance.aiVoiceConfig(keyId = keyId, publicKey = publicKey)
             CreekManager.sInstance.setAiVoiceCountry(countryCode = "US")
             CreekManager.sInstance.setAiVoiceCity(cityName = "shengzhen")
+
 
             CreekManager.sInstance.liveSportDataListen { model ->
                 println(model.toString())
@@ -223,6 +258,60 @@ class MainActivity : ComponentActivity(){
             CreekManager.sInstance.liveSportControlListen { model ->
                 println(model.toString())
             }
+
+            CreekManager.sInstance.aiDialConfig(
+                voiceData = {
+                    pcmData ->
+
+
+                    // 1. 先把 pcmData 写入临时文件
+//                    val pcmFile = File(this.cacheDir, "${System.currentTimeMillis()}.pcm")
+//                    pcmFile.writeBytes(pcmData)
+//
+//                    // 2. 输出文件路径
+//                    val wavFile = File(this.cacheDir, "${System.currentTimeMillis()}.wav")
+//                    val wavFilePath = wavFile.absolutePath
+//
+//                    // 3. FFmpeg 命令，输入直接用 pcm 文件路径
+//                    val command = "-f s16le -ar 16000 -ac 1 -i ${pcmFile.absolutePath} $wavFilePath"
+//                    // 4. 异步执行转换
+//                    FFmpegKit.executeAsync(command) { session ->
+//                        val returnCode = session.returnCode
+//                        if (returnCode.isValueSuccess) {
+//                            Log.d("FFmpeg", "PCM converted to WAV successfully, file path: $wavFilePath")
+//
+//                        } else {
+//                            Log.e("FFmpeg", "PCM to WAV conversion failed, error: ${session.failStackTrace}")
+//
+//                        }
+//                        // 临时文件删除
+//                        pcmFile.delete()
+//                    }
+
+                    ///pcm 音频数据（date）
+                    ///转文本
+                    ///文本转成功之后
+//                    CreekManager.sInstance.aiDialSendText("我想生成一个小狗", type = VoiceDialType.normal)
+//                    ///识别错误
+//                    CreekManager.sInstance.aiDialSendText("我想生成一个小狗", type = VoiceDialType.error)
+//                    /// 网络错误
+//                    CreekManager.sInstance.aiDialSendText("我想生成一个小狗", type = VoiceDialType.networkError)
+
+                },
+                confirmText = {
+                    text ->
+                    println(text)
+                    //生成Ai图片
+                    ///生成完成之后 下发图片数据
+                    val bitmap = BitmapFactory.decodeResource(this.resources, R.drawable.fun061101_03)
+                    val outputStream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                    val imageData = outputStream.toByteArray()
+                    val images: List<ByteArray> = listOf(imageData)
+                    CreekManager.sInstance.aiDialSendImages(images = images, type = VoiceDialType.normal);
+
+                }
+            )
 
 //            CreekManager.sInstance.setSportControl(
 //                controlType = Enums.exercise_control_type.CONTROL_RESUME, success = {
@@ -233,14 +322,7 @@ class MainActivity : ComponentActivity(){
 //                }
 //            )
 
-            CreekManager.sInstance.ephemerisInit(keyId = keyId, publicKey = publicKey, model = {
-                return@ephemerisInit EphemerisGPSModel(
-                    isVaild = true,
-                    altitude = 10,
-                    latitude = (22.312653 * 1000000).toInt(),
-                    longitude = (114.027986 * 1000000).toInt()
-                )
-            })
+
 
             CreekManager.sInstance.calendarConfig(timerMinute = 10, systemCalendarName = "CREEK", isSupport = true, model = {
                 msg ->
@@ -271,9 +353,9 @@ class MainActivity : ComponentActivity(){
         if(smsSelfPermission == PackageManager.PERMISSION_GRANTED){
             if (number != null && message != null && slotId != null) {
                 val subscriptionManager =
-                    this!!.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+                    this.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
                 val subscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
-                var foundSubscription = false
+                val foundSubscription = false
                 for (subscriptionInfo in subscriptionInfoList) {
                     val simSlotIndex = subscriptionInfo.simSlotIndex
                     if (simSlotIndex == slotId){

@@ -67,8 +67,8 @@ android {
 
 dependencies {
 
-    implementation("com.example.creek_sdk:flutter_release:6.9")
-    implementation("creek_aar:creek_aar_release:6.9")
+    implementation("com.example.creek_sdk:flutter_release:7.5")
+    implementation("creek_aar:creek_aar_release:7.5")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -81,7 +81,7 @@ dependencies {
     implementation("androidx.compose.material:material:1.6.3")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.2")
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.6")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.3")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
@@ -89,5 +89,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
     implementation ("androidx.compose.runtime:runtime-livedata:1.4.0")
     implementation("com.github.yalantis:ucrop:2.2.8-native")
+    implementation("arthenica:creek-ffmpeg-kit-https:1.0.0")
 
 }

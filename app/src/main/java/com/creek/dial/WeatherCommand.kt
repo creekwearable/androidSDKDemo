@@ -32,6 +32,7 @@ class WeatherCommand {
          item.min = dateTime.minute
          item.week = dateTime.dayOfWeek.value
         item.cityName = ByteString.copyFrom(weatherResponse.location.country.toByteArray())
+        item.addAllAtmosHpaItems(listOf(111,111,111))
 
 
          ///Here you convert your weather type data into the SDK weather type

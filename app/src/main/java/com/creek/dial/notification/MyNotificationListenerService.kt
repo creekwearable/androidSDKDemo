@@ -108,7 +108,6 @@ import java.util.Base64
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
         super.onNotificationRemoved(sbn)
-        // 通知被移除时，从字典中删除
         replyableNotifications.remove(sbn.key)
     }
 
