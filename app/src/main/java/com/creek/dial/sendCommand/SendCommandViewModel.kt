@@ -67,6 +67,7 @@ import com.example.model.ContactsIconModel
 import com.example.model.ContactsTable
 import com.example.model.CourseModel
 import com.example.model.DialPhotoParseModel
+import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.SyncServerType
 import com.example.proto.Calendar
