@@ -876,8 +876,8 @@ class SendCommandViewModel {
             }
             "Range query exercise record" -> {
                 CreekManager.sInstance.getSportTimeData(
-                    startTime = "2024-11-20",
-                    endTime = "2024-11-20",
+                    startTime = "2025-09-06",
+                    endTime = "2025-09-06",
                     type = null
                 ) { model: BaseModel<List<SportModel>> ->
                     val gson = GsonBuilder()

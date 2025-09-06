@@ -291,7 +291,7 @@ class MainActivity : ComponentActivity(){
                     ///pcm 音频数据（date）
                     ///转文本
                     ///文本转成功之后
-//                    CreekManager.sInstance.aiDialSendText("我想生成一个小狗", type = VoiceDialType.normal)
+                    CreekManager.sInstance.aiDialSendText("我想生成一个小狗", type = VoiceDialType.normal)
 //                    ///识别错误
 //                    CreekManager.sInstance.aiDialSendText("我想生成一个小狗", type = VoiceDialType.error)
 //                    /// 网络错误
@@ -308,7 +308,7 @@ class MainActivity : ComponentActivity(){
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                     val imageData = outputStream.toByteArray()
                     val images: List<ByteArray> = listOf(imageData)
-                    CreekManager.sInstance.aiDialSendImages(images = images, type = VoiceDialType.normal);
+                    CreekManager.sInstance.aiDialSendImages(images = images, type = VoiceDialType.normal, dialName = "twoDial");
 
                 }
             )

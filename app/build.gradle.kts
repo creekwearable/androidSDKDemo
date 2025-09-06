@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.creek.dial"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -85,8 +85,8 @@ dependencies {
 //    implementation("com.google.firebase:firebase-config")
 //    implementation("com.google.firebase:firebase-perf")
 
-    implementation("com.example.creek_sdk:flutter_release:7.6")
-    implementation("creek_aar:creek_aar_release:7.6")
+    implementation("com.example.creek_sdk:flutter_release:7.9")
+    implementation("creek_aar:creek_aar_release:7.9")
     implementation("com.google.protobuf:protobuf-javalite:4.0.0-rc-2")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -113,5 +113,10 @@ dependencies {
 
     implementation("com.github.yalantis:ucrop:2.2.8-native")
     implementation("arthenica:creek-ffmpeg-kit-https:1.0.0")
+    ///为了兼容24的API 需要指定azure-core的版本
+//    implementation("com.microsoft.cognitiveservices.speech:client-sdk:1.44.0") {
+//        exclude(group = "com.azure", module = "azure-core")
+//    }
+//    implementation("com.azure:azure-core:1.29.0")
 
 }
