@@ -72,7 +72,6 @@ import com.example.mylibrary.eventIdType
 import com.example.proto.Call
 import com.example.proto.Enums
 import com.example.proto.Message
-import com.example.xfyun_speech.XfyunSpeechPlugin
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.notification_listener_util.music.CreekMediaControllerUtils
@@ -310,6 +309,12 @@ class MainActivity : ComponentActivity(){
                     val images: List<ByteArray> = listOf(imageData)
                     CreekManager.sInstance.aiDialSendImages(images = images, type = VoiceDialType.normal, dialName = "twoDial");
 
+                }, success = {
+                    println("dial success")
+
+                }, failure = {
+                    c,m ->
+                    println("dial $m")
                 }
             )
 
