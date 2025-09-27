@@ -1195,6 +1195,98 @@ class SendCommandViewModel {
                     responseText.value = m
                 })
             }
+            "get music" -> {
+                CreekManager.sInstance.getMusicList(page = 1, size = 50, model = {
+                    model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "del music" -> {
+                CreekManager.sInstance.getMusicList(page = 1, size = 50, model = {
+                        model ->
+                    val operate = Music.protocol_music_file_operate()
+                    operate.addAllTrackItem(model.fileItemsList)
+                    CreekManager.sInstance.delMusicList(model = operate, success = {
+                        responseText.value = "success"
+                    }, failure = {
+                            code, message ->
+                        responseText.value = message
+                    })
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "get course" -> {
+                CreekManager.sInstance.getCourse( model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "del course" -> {
+                CreekManager.sInstance.getCourse( model = {
+                        model ->
+                    val operate = Sport.protocol_exercise_course_list_operate()
+                    operate.addAllListItems(model.listItemsList)
+                    CreekManager.sInstance.delCourse(model = operate,success = {
+                        responseText.value = "success"
+                    }, failure = {
+                            code, message ->
+                        responseText.value = message
+                    })
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "get route" -> {
+                CreekManager.sInstance.getGeo( model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "del route" -> {
+                CreekManager.sInstance.getGeo( model = {
+                        model ->
+                    val geoIds = model.listItemList.map { it.geobinId.toInt() }
+                    CreekManager.sInstance.delGeo(geoIds = geoIds,success = {
+                        responseText.value = "success"
+                    }, failure = {
+                            code, message ->
+                        responseText.value = message
+                    })
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "get training load" -> {
+                CreekManager.sInstance.getTrainingLoad(model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "get smart hydration" -> {
+                CreekManager.sInstance.getHydrateAssistant(model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
 
 
         }

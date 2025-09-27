@@ -56,9 +56,7 @@ class CustomDialViewModel : ViewModel() {
     fun installDial() {
         Log.d("CustomDialViewModel", "installDial")
         CreekManager.sInstance.encodeDial { model ->
-            val decimalArray: IntArray =
-                model.map { it.toInt() and 0xFF }.toIntArray()
-            CreekManager.sInstance.upload(fileName = "$titleName.bin", fileData = decimalArray, uploadProgress = {
+            CreekManager.sInstance.uploadNew(fileName = "$titleName.bin", fileData = model, uploadProgress = {
                 Log.d("dial", "dial progress = $it")
             }, uploadSuccess = {
 
@@ -66,6 +64,7 @@ class CustomDialViewModel : ViewModel() {
 
             })
         }
+
     }
 
     fun chooseColor(index: Int) {
@@ -117,6 +116,7 @@ class CustomDialViewModel : ViewModel() {
 
     @Composable
     fun unzipFile(titleName: String, width: Int, height: Int, cornerRadius: Int) {
+        this.titleName = titleName
         val context = LocalContext.current
         val fileManager = context.filesDir
         val destinationDir = File(fileManager, "directory")

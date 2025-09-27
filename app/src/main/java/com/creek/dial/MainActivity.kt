@@ -51,7 +51,9 @@ import androidx.navigation.navArgument
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.creek.dial.customDial.CustomDialScreen
 import com.creek.dial.dial.DialScreen
+import com.creek.dial.music.CourseUploadScreen
 import com.creek.dial.music.MusicUploadScreen
+import com.creek.dial.music.RouteUploadScreen
 import com.creek.dial.navigation.Dial
 import com.creek.dial.navigation.SdkFunction
 import com.creek.dial.navigation.tabRowScreens
@@ -143,8 +145,8 @@ class MainActivity : ComponentActivity(){
         CreekManager.sInstance.creekRegister(this, completed = {
 
             CreekManager.sInstance.initSDK()
-            val keyId = "*************"
-            val publicKey = "********************"
+            val keyId = "L9z6xGit93O8rmFN2"
+            val publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAooLJ1knpZ4P3J5U158kUxjKnhj0hgt11ZIXfV/F8q+ku9uGRGL+4WuGrM1MfX1+1aqQNnCDYp57ioprm+4w7uvYwyz4j7JCutRVMm5BwbfruFfR8KwsL9z6xGit93O8rmFN2hkuUFxZSLiBBJiuhe+wtrDIPBov8QaNso/U0GrrDDgoh+R3p8fUQ3duMuL0I9pxW/sphVZOQbdNafti0AEdqJIwoQ5GSSGr0XKkHFk1kep9CifouWnHjoMqTMagDyaj07NSY2A4mxSn4S3e5L25NuJj80UcguDU6WxnZW5j9GC42BpmqA+Kcu54GqkXAF383tJHYiSXZtAFl80/bxQIDAQAB"
             CreekManager.sInstance.initGlobalConfig(keyId, publicKey)
             CreekManager.sInstance.ephemerisListen {
               val model =  EphemerisGPSModel(
@@ -231,8 +233,8 @@ class MainActivity : ComponentActivity(){
             }
             CreekManager.sInstance.messageReplyListen { model: Message.protocol_message_reply_send_operate ->
                 if (model.replyType == Enums.msg_reply_type.MSG_REPLY_CALL){
-                    var phone = model.msgId.toStringUtf8().substring(1,model.msgId.count())
-                    var slotId = model.msgId.toStringUtf8().substring(0,1)
+                    var phone = model.msgId.toStringUtf8().substring(2,model.msgId.count())
+                    var slotId = model.msgId.toStringUtf8().substring(0,2)
                     sendSms(number = phone, message = model.sendContent.toStringUtf8(), slotId = slotId.toInt())
                 }else{
                     MyNotificationListenerService.getInstance()
@@ -332,86 +334,10 @@ class MainActivity : ComponentActivity(){
 //            )
 
 
-
             CreekManager.sInstance.calendarConfig(timerMinute = 10, systemCalendarName = "CREEK", isSupport = true, model = {
                 msg ->
                 Log.w("calendarConfig", msg)
             })
-
-            // 获取血压数据
-            CreekManager.sInstance.getBloodPressure(page = 1, size = 20,model = {model ->
-                println(model.toString())
-            }, failure = { c,d ->
-                println("errCode: $c, errDesc: $d")
-            })
-
-            //获取音量大小
-            CreekManager.sInstance.getVolumeAdjust(model = {model->
-                println(model.toString())
-            }, failure = {c, d ->
-                println("errCode: $c, errDesc: $d")
-            })
-
-            // 设置音量大小，最大设置是100， 最小设置 0
-            // 测试数据45，
-            val volumeOperate = VolumeAdjust.protocol_volume_adjust_operate()
-            volumeOperate.ringtoneVolume = 45;
-            CreekManager.sInstance.setVolumeAdjust(model = volumeOperate, success = {
-                println("set volume success")
-            }, failure = {c, d ->
-                println("errCode: $c, errDesc: $d")
-            })
-
-
-
-            // 设置吃药提醒
-            /*
-            24小时格式，开始时间要早于结束时间
-            startHour，startMinute：开始时间：设置小时，设置分钟  例子设置是 11点32分
-            endHour，endMinute：结束时间：设置小时，设置分钟  例子设置是 23点58分
-            repeatList：每周重复星期，七个布尔值，代表从周一到周日 例子中提醒 周一，周三，周五，周日 吃药
-            interval：提醒时间间隔
-            * */
-            val medicineOperate = Medicine.protocol_medicine_remind_operate()
-            medicineOperate.startHour = 11
-            medicineOperate.startMinute = 32
-
-            medicineOperate.endHour = 23
-            medicineOperate.endMinute = 58
-
-            val repeatArr : List<Boolean> = listOf(true, false, true, false,true, false, true)
-            medicineOperate.repeatList.addAll(repeatArr)
-            medicineOperate.interval = 5
-            CreekManager.sInstance.setMedicineReMind(model = medicineOperate, success = {
-                println("setMedicineRemind success")
-            }, failure = {c,d ->
-                println("errCode: $c, errDesc: $d")
-            })
-            
-
-
-            val health_type = Enums.ring_health_type.RING_HRV;
-            CreekManager.sInstance.getClickHealthMeasure(type = health_type, model = {model->
-                println("获取成功： ${model.toString()}")
-            }, failure = {c,d ->
-                println("获取失败: ")
-            })
-
-            var measure_operate = Ring.protocol_ring_click_measure_operate()
-            measure_operate.healthType = Enums.ring_health_type.RING_HRV
-            measure_operate.tranType = Enums.tran_direction_type.APP_TRAN
-            measure_operate.value = 67;
-            //时间戳
-            measure_operate.measureTime  = 1117894;
-            measure_operate.measureStatus = Enums.health_measure_status.HEALTH_STATUS_MEASURING;
-            CreekManager.sInstance.setClickHealthMeasure(measure_operate, success = {
-                println("设置成功")
-            }, failure = {c,m ->
-                println("设置失败: $c, $m")
-            })
-
-
-
 
         })
 
@@ -441,7 +367,7 @@ class MainActivity : ComponentActivity(){
                 val subscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
                 val foundSubscription = false
                 for (subscriptionInfo in subscriptionInfoList) {
-                    val simSlotIndex = subscriptionInfo.simSlotIndex
+                    val simSlotIndex = subscriptionInfo.subscriptionId
                     if (simSlotIndex == slotId){
                         val subscriptionId = subscriptionInfo.subscriptionId
                         val smsManager = SmsManager.getSmsManagerForSubscriptionId(subscriptionId)
@@ -450,12 +376,12 @@ class MainActivity : ComponentActivity(){
                         break
                     }
                 }
-                if (!foundSubscription) {
-                    // If the specified card slot is not found, use the default SmsManager to send the SMS
-                    val defaultSmsManager = SmsManager.getDefault()
-                    defaultSmsManager.sendTextMessage(number, null, message, null, null)
-                    Log.d("SMS", "Default SMS Manager used to send message")
-                }
+//                if (!foundSubscription) {
+//                    // If the specified card slot is not found, use the default SmsManager to send the SMS
+//                    val defaultSmsManager = SmsManager.getDefault()
+//                    defaultSmsManager.sendTextMessage(number, null, message, null, null)
+//                    Log.d("SMS", "Default SMS Manager used to send message")
+//                }
             }
         }
 
@@ -512,6 +438,12 @@ fun MainScreen() {
 
             composable("music",) {
                 MusicUploadScreen(navController)
+            }
+            composable("course",) {
+                CourseUploadScreen(navController)
+            }
+            composable("route",) {
+                RouteUploadScreen(navController)
             }
 
             // 添加 videoDial 路由
@@ -621,6 +553,10 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
             chooseFunction = { functionStr ->
                 if (functionStr == "Upload Music"){
                     navController.navigate("music")
+                }else if (functionStr == "upload course"){
+                    navController.navigate("course")
+                }else if (functionStr == "upload route"){
+                    navController.navigate("route")
                 }else{
                     navController.navigate("sendCommand/$functionStr")
                 }
@@ -646,7 +582,6 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
     composable(Dial.route) {
         DialScreen(navController)
     }
-
 
 }
 

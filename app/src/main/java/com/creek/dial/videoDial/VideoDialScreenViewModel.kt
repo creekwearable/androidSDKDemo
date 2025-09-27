@@ -62,9 +62,7 @@ class VideoDialViewModel : ViewModel() {
     fun installDial() {
         Log.d("CustomDialViewModel", "installDial")
         CreekManager.sInstance.encodeVideoDial { model ->
-            val decimalArray: IntArray =
-                model.map { it.toInt() and 0xFF }.toIntArray()
-            CreekManager.sInstance.upload(fileName = "$titleName.bin", fileData = decimalArray, uploadProgress = {
+            CreekManager.sInstance.uploadNew(fileName = "video.bin", fileData = model, uploadProgress = {
                 Log.d("dial", "dial progress = $it")
             }, uploadSuccess = {
 

@@ -36,6 +36,7 @@ class LocalPhoneStateListener internal constructor( private val context: Context
     private var callType: CallType? = null
     private var previousState: Int? = null
     private var RECEIVED_CALL = false
+    private var mSimSlotIndex : Int? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Synchronized
@@ -49,7 +50,6 @@ class LocalPhoneStateListener internal constructor( private val context: Context
             Log.d("LocalPhoneStateListener", "incomingNumber is null or empty, skipping processing.")
             return
         }
-
         when (state) {
             TelephonyManager.CALL_STATE_IDLE -> {
 
@@ -109,6 +109,7 @@ class LocalPhoneStateListener internal constructor( private val context: Context
                     "LocalPhoneStateListener",
                     "Phone State event PHONE_RINGING number: $incomingNumber"
                 )
+                mSimSlotIndex = null
                 val simSlot: Int = getSimSlotForIncomingCall(context) //获取SIM卡槽信息
                 sendToWatch(CallEvent.INCOMINGMISSED,  incomingNumber,simSlot,1,context)
             }
@@ -162,8 +163,12 @@ class LocalPhoneStateListener internal constructor( private val context: Context
                     data.remindTypeValue = Enums.message_remind_type.Missed_Call_VALUE
                     data.contactText = ByteString.copyFrom((displayName.ifEmpty { phoneNumber }).toByteArray())
                     data.msgContent = ByteString.copyFrom((phoneNumber).toByteArray())
-                    val msgId = "$simSlotIndex$phoneNumber"
+                    var msgId = "$simSlotIndex$phoneNumber"
+                    if(simSlotIndex < 10){
+                        msgId = "0$simSlotIndex$phoneNumber"
+                    }
                     data.msgId = ByteString.copyFrom(msgId.toByteArray())
+                    println("sendToWatch simSlotIndex: $simSlotIndex phoneNumber: $phoneNumber")
                     CreekManager.sInstance.setMessageApp(model = data, success = {
                         Log.d(
                             "LocalPhoneStateListener","setMessageApp success"
@@ -224,6 +229,9 @@ class LocalPhoneStateListener internal constructor( private val context: Context
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     fun getSimSlotForIncomingCall(context: Context): Int {
+        if(mSimSlotIndex != null){
+            return mSimSlotIndex!!
+        }
         val permission = ContextCompat.checkSelfPermission(
             context, Manifest.permission.READ_PHONE_STATE
         )
@@ -236,11 +244,12 @@ class LocalPhoneStateListener internal constructor( private val context: Context
                     val telephonyManager = (context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager).createForSubscriptionId(subId)
                     if (telephonyManager.callState == TelephonyManager.CALL_STATE_RINGING) {
                         // 找到正在响铃的卡槽
-                        return info.simSlotIndex
+                        mSimSlotIndex = info.subscriptionId
+                        return info.subscriptionId
                     }
                 }
                 // 没有检测到正在响铃的，默认返回主卡或第一个
-                return activeList[0].simSlotIndex
+                return activeList[0].subscriptionId
             }
         }
         return 9
