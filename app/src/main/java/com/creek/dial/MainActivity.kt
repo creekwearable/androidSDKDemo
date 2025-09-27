@@ -71,7 +71,11 @@ import com.example.mylibrary.VoiceDialType
 import com.example.mylibrary.eventIdType
 import com.example.proto.Call
 import com.example.proto.Enums
+import com.example.proto.Medicine
 import com.example.proto.Message
+import com.example.proto.Ring
+import com.example.proto.VolumeAdjust
+//import com.example.xfyun_speech.XfyunSpeechPlugin
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.notification_listener_util.music.CreekMediaControllerUtils
@@ -333,6 +337,81 @@ class MainActivity : ComponentActivity(){
                 msg ->
                 Log.w("calendarConfig", msg)
             })
+
+            // 获取血压数据
+            CreekManager.sInstance.getBloodPressure(page = 1, size = 20,model = {model ->
+                println(model.toString())
+            }, failure = { c,d ->
+                println("errCode: $c, errDesc: $d")
+            })
+
+            //获取音量大小
+            CreekManager.sInstance.getVolumeAdjust(model = {model->
+                println(model.toString())
+            }, failure = {c, d ->
+                println("errCode: $c, errDesc: $d")
+            })
+
+            // 设置音量大小，最大设置是100， 最小设置 0
+            // 测试数据45，
+            val volumeOperate = VolumeAdjust.protocol_volume_adjust_operate()
+            volumeOperate.ringtoneVolume = 45;
+            CreekManager.sInstance.setVolumeAdjust(model = volumeOperate, success = {
+                println("set volume success")
+            }, failure = {c, d ->
+                println("errCode: $c, errDesc: $d")
+            })
+
+
+
+            // 设置吃药提醒
+            /*
+            24小时格式，开始时间要早于结束时间
+            startHour，startMinute：开始时间：设置小时，设置分钟  例子设置是 11点32分
+            endHour，endMinute：结束时间：设置小时，设置分钟  例子设置是 23点58分
+            repeatList：每周重复星期，七个布尔值，代表从周一到周日 例子中提醒 周一，周三，周五，周日 吃药
+            interval：提醒时间间隔
+            * */
+            val medicineOperate = Medicine.protocol_medicine_remind_operate()
+            medicineOperate.startHour = 11
+            medicineOperate.startMinute = 32
+
+            medicineOperate.endHour = 23
+            medicineOperate.endMinute = 58
+
+            val repeatArr : List<Boolean> = listOf(true, false, true, false,true, false, true)
+            medicineOperate.repeatList.addAll(repeatArr)
+            medicineOperate.interval = 5
+            CreekManager.sInstance.setMedicineReMind(model = medicineOperate, success = {
+                println("setMedicineRemind success")
+            }, failure = {c,d ->
+                println("errCode: $c, errDesc: $d")
+            })
+            
+
+
+            val health_type = Enums.ring_health_type.RING_HRV;
+            CreekManager.sInstance.getClickHealthMeasure(type = health_type, model = {model->
+                println("获取成功： ${model.toString()}")
+            }, failure = {c,d ->
+                println("获取失败: ")
+            })
+
+            var measure_operate = Ring.protocol_ring_click_measure_operate()
+            measure_operate.healthType = Enums.ring_health_type.RING_HRV
+            measure_operate.tranType = Enums.tran_direction_type.APP_TRAN
+            measure_operate.value = 67;
+            //时间戳
+            measure_operate.measureTime  = 1117894;
+            measure_operate.measureStatus = Enums.health_measure_status.HEALTH_STATUS_MEASURING;
+            CreekManager.sInstance.setClickHealthMeasure(measure_operate, success = {
+                println("设置成功")
+            }, failure = {c,m ->
+                println("设置失败: $c, $m")
+            })
+
+
+
 
         })
 
