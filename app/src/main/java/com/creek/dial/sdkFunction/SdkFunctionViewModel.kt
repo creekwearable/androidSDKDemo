@@ -88,6 +88,13 @@ class SdkFunctionViewModel : ViewModel() {
         "Get Watch Sensor",
         "Set Watch Sensor",
         "Get Water Assistant",
+        "Get Volume",
+        "Set Volume",
+        "Get MedicineRemind",
+        "Set MedicineRemind",
+        "Get BloodPressure",
+        "Set ClickHealthMeasure",
+        "Get ClickHealthMeasure",
         )
 
     fun chooseFunction(index: Int) {

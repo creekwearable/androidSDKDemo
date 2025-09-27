@@ -132,6 +132,7 @@ fun VideoDialScreen(
             // 可选：加载裁剪后的图片
             firstFrameBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, resultUri)
         }
+
     }
 
     // 视频选择器

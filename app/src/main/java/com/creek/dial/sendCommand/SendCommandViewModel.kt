@@ -70,10 +70,14 @@ import com.example.model.DialPhotoParseModel
 import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.SyncServerType
+import com.example.proto.BloodPressure
 import com.example.proto.Calendar
 import com.example.proto.Geo
+import com.example.proto.Medicine
 import com.example.proto.Morning
 import com.example.proto.Music
+import com.example.proto.Ring
+import com.example.proto.VolumeAdjust
 import com.example.proto.WatchSensor
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -319,6 +323,74 @@ class SendCommandViewModel {
                     responseText.value = m
                 })
 
+            }
+            "Get Volume" -> {
+                CreekManager.sInstance.getVolumeAdjust({ model: VolumeAdjust.protocol_volume_adjust_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+            "Set Volume" -> {
+                var  operate = VolumeAdjust.protocol_volume_adjust_operate()
+                operate.ringtoneVolume = 45
+                CreekManager.sInstance.setVolumeAdjust(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = { _,m ->
+                    responseText.value = m
+                })
+            }
+            "Get MedicineRemind" -> {
+                CreekManager.sInstance.getMedicineRemind({ model ->
+                    responseText.value = model.toString()
+                }, failure = {_,m ->
+                    responseText.value = m
+                })
+            }
+            "Set MedicineRemind" -> {
+                var operate = Medicine.protocol_medicine_remind_operate();
+                operate.startHour = 10
+                operate.startMinute = 30
+                operate.endHour = 11
+                operate.endMinute = 0
+                val repeates = booleanArrayOf(true,true, true,true,true,false,false)
+                operate.repeatList.addAll(repeates.toList())
+                operate.interval = 2
+                CreekManager.sInstance.setMedicineReMind(operate, success = {
+                    responseText.value = "set success: ${operate.toString()}"
+                }, failure = {_,d ->
+                    responseText.value = d
+                })
+            }
+            "Get BloodPressure" -> {
+                CreekManager.sInstance.getBloodPressure(page = 1, size = 20, model = { model:BloodPressure.protocol_blood_pressure_inquire_reply ->
+                    responseText.value = model.toString()
+                }, failure = {c, m ->
+                    responseText.value = m
+                })
+            }
+            "Set ClickHealthMeasure"->{
+                var measure_operate = Ring.protocol_ring_click_measure_operate()
+                measure_operate.healthType = Enums.ring_health_type.AF
+                measure_operate.tranType = Enums.tran_direction_type.APP_TRAN
+                measure_operate.value = 67;
+                //时间戳
+                measure_operate.measureTime  = 1117894;
+                measure_operate.measureStatus = Enums.health_measure_status.HEALTH_STATUS_MEASURING;
+                measure_operate.measureType = Enums.health_measure_type.HEALTH_MEASURE_START;
+                CreekManager.sInstance.setClickHealthMeasure(measure_operate, success = {
+                    responseText.value = "设置成功"
+                }, failure = {c,m ->
+                    responseText.value ="获取失败: $c, $m";
+                })
+            }
+            "Get ClickHealthMeasure"->{
+                val health_type = Enums.ring_health_type.AF;
+                CreekManager.sInstance.getClickHealthMeasure(type = health_type, model = {model->
+                    responseText.value = model.toString()
+                }, failure = {c,d ->
+                    responseText.value ="获取失败: $c, $d";
+                })
             }
             "Get User Information" -> {
                 CreekManager.sInstance.getUserInfo({ model: Userinfo.protocol_user_info_operate ->
