@@ -80,8 +80,8 @@ dependencies {
 //    implementation("com.google.firebase:firebase-config")
 //    implementation("com.google.firebase:firebase-perf")
 
-    implementation("com.example.creek_sdk:flutter_release:8.7")
-    implementation("creek_aar:creek_aar_release:8.7")
+    implementation("com.example.creek_sdk:flutter_release:9.0")
+    implementation("creek_aar:creek_aar_release:9.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

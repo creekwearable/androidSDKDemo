@@ -51,6 +51,7 @@ import androidx.navigation.navArgument
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.creek.dial.customDial.CustomDialScreen
 import com.creek.dial.dial.DialScreen
+import com.creek.dial.healthMeasure.HealthMeasureScreen
 import com.creek.dial.music.CourseUploadScreen
 import com.creek.dial.music.MusicUploadScreen
 import com.creek.dial.music.RouteUploadScreen
@@ -61,6 +62,7 @@ import com.creek.dial.notification.MyNotificationListenerService
 import com.creek.dial.scanDevice.ScanDeviceScreen
 import com.creek.dial.sdkFunction.SdkFunction
 import com.creek.dial.sendCommand.SendCommandScreen
+import com.creek.dial.sportLive.SportsLiveScreen
 import com.creek.dial.ui.theme.Creek_dial_androidTheme
 import com.example.creek_blue_manage.LocalPhoneStateListener
 import com.example.model.EphemerisGPSModel
@@ -446,6 +448,18 @@ fun MainScreen() {
                 RouteUploadScreen(navController)
             }
 
+            // 添加 healthMeasure 路由
+            composable("healthMeasure",) {
+                HealthMeasureScreen(navController)
+            }
+
+             // 添加 sportLive 路由
+            composable("sportLive",) {
+                SportsLiveScreen(navController)
+            }
+
+
+
             // 添加 videoDial 路由
             composable(
                 "videoDial/{titleName}/{width}/{height}/{cornerRadius}",
@@ -557,6 +571,10 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                     navController.navigate("course")
                 }else if (functionStr == "upload route"){
                     navController.navigate("route")
+                }else if (functionStr == "Health Measure"){
+                    navController.navigate("healthMeasure")
+                }else if (functionStr == "sport Live"){
+                    navController.navigate("sportLive")
                 }else{
                     navController.navigate("sendCommand/$functionStr")
                 }

@@ -66,6 +66,8 @@ import androidx.core.content.ContextCompat
 import com.example.model.ContactsIconModel
 import com.example.model.ContactsTable
 import com.example.model.CourseModel
+import com.example.model.CreekAfModel
+import com.example.model.CreekAfPpgModel
 import com.example.model.DialPhotoParseModel
 import com.example.model.EphemerisGPSModel
 import com.example.mylibrary.CancelAutoConnectType
@@ -83,12 +85,21 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import java.io.FileInputStream
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 class SendCommandViewModel {
 
     val responseText = mutableStateOf("")
 
     var loddingState = mutableStateOf(false)
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val endTime = LocalDate.now().format(formatter)               // 当前日期
+    val startTime = LocalDate.now().minusMonths(1).format(formatter) // 一个月前
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun sendCommand(title:String, context:Context) {
@@ -1287,6 +1298,55 @@ class SendCommandViewModel {
                 })
 
             }
+            "Get af data" -> {
+                CreekManager.sInstance.getAfData(
+                    startTime = startTime,
+                    endTime = endTime
+                ) { model: BaseModel<List<CreekAfModel>> ->
+                    responseText.value = model.data?.toList().toString()
+
+                }
+
+            }
+            "Get afPpg data" -> {
+                CreekManager.sInstance.getAfPpgData(
+                    startTime = startTime,
+                    endTime = endTime
+                ) { model: BaseModel<List<CreekAfPpgModel>> ->
+                    println("1122")
+                    responseText.value = model.data?.toList().toString()
+
+                }
+
+            }
+            "getWatchReminderWitch" -> {
+                CreekManager.sInstance.getWatchReminderWitch( model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+
+            }
+            "setWatchReminderWitch" -> {
+                val  operate =  Ring.protocol_remind_mark_switch_operate()
+                operate.goalAchievedSwitch = Enums.switch_type.SWITCH_ON
+                operate.lowPowerSwitch = Enums.switch_type.SWITCH_ON
+                operate.chargerFullSwitch = Enums.switch_type.SWITCH_ON
+                operate.findRingLedSwitch = Enums.switch_type.SWITCH_ON
+                operate.ntctemperatureHighSwitch = Enums.switch_type.SWITCH_ON
+                operate.heartRateHighSwitch = Enums.switch_type.SWITCH_ON
+                operate.heartRateLowSwitch = Enums.switch_type.SWITCH_ON
+                operate.sedentaryRemindSwitch = Enums.switch_type.SWITCH_ON
+                operate.highStressSwitch = Enums.switch_type.SWITCH_ON
+                operate.lowSpo2Switch = Enums.switch_type.SWITCH_ON
+                CreekManager.sInstance.setWatchReminderWitch(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+
 
 
         }

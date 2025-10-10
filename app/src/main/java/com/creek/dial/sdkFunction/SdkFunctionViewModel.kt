@@ -98,6 +98,12 @@ class SdkFunctionViewModel : ViewModel() {
         "Get Watch Sensor",
         "Set Watch Sensor",
         "Get Water Assistant",
+        "Health Measure",
+        "sport Live",
+        "Get af data",
+        "Get afPpg data",
+        "getWatchReminderWitch",
+        "setWatchReminderWitch"
 //        "Get Volume",
 //        "Set Volume",
 //        "Get MedicineRemind",

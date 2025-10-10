@@ -226,17 +226,22 @@ fun VideoDialScreen(
                     AndroidView(
                         factory = { ctx ->
                             VideoView(ctx).apply {
-                                setVideoURI(Uri.parse(viewModel.playVideoPath.value))
+                                val file = File(viewModel.playVideoPath.value)
+                                setVideoURI(Uri.fromFile(file))
                                 setOnPreparedListener { it.isLooping = true }
                                 start()
                             }
                         },
                         update = { view ->
                             // 更新状态时，复用 view，不重新创建
-                            view.stopPlayback()
-                            view.setVideoURI(Uri.parse(viewModel.playVideoPath.value))
-                            view.setOnPreparedListener { it.isLooping = true }
-                            view.start()
+                            if(viewModel.uptateVideValue.intValue != 0){
+                                view.stopPlayback()
+                                val file = File(viewModel.playVideoPath.value)
+                                view.setVideoURI(Uri.fromFile(file))
+                                view.setOnPreparedListener { it.isLooping = true }
+                                view.start()
+                            }
+
                         },
                         modifier = Modifier
                             .fillMaxWidth()
