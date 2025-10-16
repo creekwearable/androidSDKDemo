@@ -74,10 +74,12 @@ import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.SyncServerType
 import com.example.proto.BloodPressure
 import com.example.proto.Calendar
+import com.example.proto.CardioFitness
 import com.example.proto.Geo
 import com.example.proto.Medicine
 import com.example.proto.Morning
 import com.example.proto.Music
+import com.example.proto.QrcodeList
 import com.example.proto.Ring
 import com.example.proto.VolumeAdjust
 import com.example.proto.WatchSensor
@@ -1341,6 +1343,52 @@ class SendCommandViewModel {
                 operate.highStressSwitch = Enums.switch_type.SWITCH_ON
                 operate.lowSpo2Switch = Enums.switch_type.SWITCH_ON
                 CreekManager.sInstance.setWatchReminderWitch(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+
+            "get cardio fitness" -> {
+                CreekManager.sInstance.getCardioFitness({ model ->
+                    responseText.value = model.toString()
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+            "set cardio fitness" -> {
+                var  operate =  CardioFitness.protocol_cardio_fitness_operate()
+                var vo2max =  CardioFitness.cardio_fitness_vo2max_data()
+                vo2max.vo2MaxValue = 40
+                vo2max.unixTime = Instant.now().epochSecond.toInt()
+                operate.vo2MaxBest = vo2max
+                CreekManager.sInstance.setCardioFitness(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+
+            "get qr code" -> {
+                CreekManager.sInstance.getQrCodeList({ model ->
+                    responseText.value = model.toString()
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+            "set qr code" -> {
+                val operate =  QrcodeList.protocol_qr_code_list_operate()
+
+                operate.operate = Enums.operate_II_type.INSERT
+//                operate.operate = Enums.operate_II_type.DELETE
+//                operate.operate = Enums.operate_II_type.UPDATE
+
+                val item =  QrcodeList.qr_code_list_item()
+                item.id = 1
+                item.content =  ByteString.copyFrom("test".toByteArray())
+                item.name = ByteString.copyFrom("test".toByteArray())
+                operate.addItems(item)
+                CreekManager.sInstance.setQrCodeList(model = operate, success = {
                     responseText.value = "success"
                 }, failure = {_, m ->
                     responseText.value = m

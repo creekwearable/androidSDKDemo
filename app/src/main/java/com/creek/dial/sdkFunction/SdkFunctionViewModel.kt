@@ -103,14 +103,12 @@ class SdkFunctionViewModel : ViewModel() {
         "Get af data",
         "Get afPpg data",
         "getWatchReminderWitch",
-        "setWatchReminderWitch"
-//        "Get Volume",
-//        "Set Volume",
-//        "Get MedicineRemind",
-//        "Set MedicineRemind",
-//        "Get BloodPressure",
-//        "Set ClickHealthMeasure",
-//        "Get ClickHealthMeasure",
+        "setWatchReminderWitch",
+        "get cardio fitness",
+        "set cardio fitness",
+        "get qr code",
+        "set qr code",
+
         )
 
     fun chooseFunction(index: Int) {

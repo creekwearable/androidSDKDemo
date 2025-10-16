@@ -317,6 +317,9 @@ class MainActivity : ComponentActivity(){
                     val images: List<ByteArray> = listOf(imageData)
                     CreekManager.sInstance.aiDialSendImages(images = images, type = VoiceDialType.normal, dialName = "twoDial");
 
+
+
+
                 }, success = {
                     println("dial success")
 
