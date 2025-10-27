@@ -70,6 +70,7 @@ import com.example.model.CreekAfModel
 import com.example.model.CreekAfPpgModel
 import com.example.model.DialPhotoParseModel
 import com.example.model.EphemerisGPSModel
+import com.example.model.RespiratoryModel
 import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.SyncServerType
 import com.example.proto.BloodPressure
@@ -1380,8 +1381,8 @@ class SendCommandViewModel {
                 val operate =  QrcodeList.protocol_qr_code_list_operate()
 
                 operate.operate = Enums.operate_II_type.INSERT
-//                operate.operate = Enums.operate_II_type.DELETE
-//                operate.operate = Enums.operate_II_type.UPDATE
+                //operate.operate = Enums.operate_II_type.DELETE
+                //operate.operate = Enums.operate_II_type.UPDATE
 
                 val item =  QrcodeList.qr_code_list_item()
                 item.id = 1
