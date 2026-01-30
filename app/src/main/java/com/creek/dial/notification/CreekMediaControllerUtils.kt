@@ -143,6 +143,7 @@ class CreekMediaControllerUtils {
             val volumeTemp = (round(volumePercentage * maxVolume)).toInt()
 
             mMediaController?.setVolumeTo(volumeTemp, AudioManager.FLAG_SHOW_UI)
+
             return true
         }
         Log.w("lxk", "setVolume-mMediaController==null")

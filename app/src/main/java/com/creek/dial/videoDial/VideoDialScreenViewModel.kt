@@ -173,7 +173,7 @@ class VideoDialViewModel : ViewModel() {
         // 你可以将裁剪参数保存到 ViewModel 或上传到服务器
         rect?.let {
             Log.d("VideoDialViewModel", "Crop rect: x=${it.left}, y=${it.top}, w=${it.width()}, h=${it.height()}")
-            CreekManager.sInstance.setVideoDial(videoPath = saveVideoPath, startSecond = 0, endSecond = 3, cropW = it.width().toDouble(), cropH = it.height()
+            CreekManager.sInstance.setVideoDial(videoPath = saveVideoPath, startSecond = 0, endSecond = 5, cropW = it.width().toDouble(), cropH = it.height()
                 .toDouble(),
                 cropX = it.left.toDouble(), cropY = it.top.toDouble(), model = {
                     videoUrl ->

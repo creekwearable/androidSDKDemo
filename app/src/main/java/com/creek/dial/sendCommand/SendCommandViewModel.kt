@@ -62,6 +62,7 @@ import java.io.File
 import java.io.IOException
 import java.time.Instant
 import android.provider.Settings
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.core.content.ContextCompat
 import com.example.model.ContactsIconModel
 import com.example.model.ContactsTable
@@ -73,19 +74,27 @@ import com.example.model.EphemerisGPSModel
 import com.example.model.RespiratoryModel
 import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.SyncServerType
+import com.example.proto.Alexa
 import com.example.proto.BloodPressure
 import com.example.proto.Calendar
 import com.example.proto.CardioFitness
 import com.example.proto.Geo
+import com.example.proto.HydrateAassistant
 import com.example.proto.Medicine
 import com.example.proto.Morning
 import com.example.proto.Music
+import com.example.proto.Prayer
 import com.example.proto.QrcodeList
 import com.example.proto.Ring
+import com.example.proto.VitalityScore
 import com.example.proto.VolumeAdjust
 import com.example.proto.WatchSensor
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -298,15 +307,19 @@ class SendCommandViewModel {
                 CreekManager.sInstance.androidPair()
             }
             "Get Device Information" -> {
-                CreekManager.sInstance.getFirmware({ model: Deviceinfo.protocol_device_info ->
+//                CreekManager.sInstance.getCurrentLocationFirmware({ model: Deviceinfo.protocol_device_info ->
+//
+//                    responseText.value = model.toString()
+//                    CreekManager.sInstance.getSNFirmware(model,{
+//                        Log.w("sn", "sn++++$it")
+//                    })
+//
+//                }, failure = { c, m ->
+//                    responseText.value = m
+//                })
 
-                    responseText.value = model.toString()
-                    CreekManager.sInstance.getSNFirmware(model,{
-                        Log.w("sn", "sn++++$it")
-                    })
-
-                }, failure = { c, m ->
-                    responseText.value = m
+                CreekManager.sInstance.connect(id = "F4:4E:FD:D8:72:EF", connect = {
+                    println("连接状态:${it}")
                 })
 
             }
@@ -1271,7 +1284,7 @@ class SendCommandViewModel {
             "del route" -> {
                 CreekManager.sInstance.getGeo( model = {
                         model ->
-                    val geoIds = model.listItemList.map { it.geobinId.toInt() }
+                    val geoIds = model.listItemList.map { it.geobinId }
                     CreekManager.sInstance.delGeo(geoIds = geoIds,success = {
                         responseText.value = "success"
                     }, failure = {
@@ -1390,6 +1403,174 @@ class SendCommandViewModel {
                 item.name = ByteString.copyFrom("test".toByteArray())
                 operate.addItems(item)
                 CreekManager.sInstance.setQrCodeList(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+            "get deviceStatus" -> {
+                CreekManager.sInstance.getDeviceStatus(type = Enums.device_status_type.sport_status,{ model ->
+                    if(model.value == 1){
+                        println("运动中")
+                    }else{
+                        println("未运动")
+                    }
+                    responseText.value = model.toString()
+                }, failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+            "getHydrateAssistant" -> {
+                CreekManager.sInstance.getHydrateAssistant(model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+
+            "addHydrateAssistant" -> {
+                val operate = HydrateAassistant.protocol_hydrate_assistant_operate().apply {
+                    operate = Enums.hydrate_operate_type.HYDRARE_ADD
+                    addAllItem(listOf(HydrateAassistant.hydrate_assistant_daily_item().apply {
+                        drinkType = Enums.drink_type.BARLEY_TEA
+                        drinkValue = 100
+                        hour = 8
+                        min = 30
+                    }))
+                }
+                CreekManager.sInstance.setHydrateAssistant(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+            "delHydrateAssistant" -> {
+                val operate = HydrateAassistant.protocol_hydrate_assistant_operate().apply {
+                    operate = Enums.hydrate_operate_type.HYDRARE_DELETE
+                    addAllItem(listOf(HydrateAassistant.hydrate_assistant_daily_item().apply {
+                        recordId = 1  //拿获取到的列表id
+                    })
+                  )
+                }
+                CreekManager.sInstance.setHydrateAssistant(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+            "getHydrateAssistantConfig" -> {
+                CreekManager.sInstance.getHydrateAssistantConfig(model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+
+            "setHydrateAssistantConfig" -> {
+                val setting = HydrateAassistant.hydrate_assistant_setting().apply {
+                    interval = 30
+                    switchFlag = true
+
+                    addTimeSection( HydrateAassistant.hydrate_assistant_time_section().apply {
+                        startHour = 8
+                        startMinute = 0
+                        endHour = 8
+                        endMinute = 30
+                    })
+                    addTimeSection(
+                        HydrateAassistant.hydrate_assistant_time_section().apply {
+                            startHour = 9
+                            startMinute = 0
+                            endHour = 9
+                            endMinute = 30
+                        }
+                    )
+                }
+                val operate = HydrateAassistant.protocol_hydrate_assistant_setting_operate().apply {
+                    this.setting = setting
+                }
+                CreekManager.sInstance.setHydrateAssistantConfig(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+            "setVitalityScore" -> {
+                val operate = VitalityScore.protocol_custom_titan_vitality_score_operate().apply {
+                    vitalityScore = 50
+                }
+                CreekManager.sInstance.setVitalityScore(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+            "getCalendar" -> {
+                CreekManager.sInstance.getCalendar(model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+
+            "getHydrateAssistantSupportType" -> {
+                CreekManager.sInstance.getHydrateAssistantSupportType(model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+
+            "setVoiceAssistantConfig" -> {
+                val operate = Alexa.protocol_ai_feature_operate()
+                val config = Alexa.protocol_ai_feature_config()
+                config.userCode = ByteString.copyFrom("123".toByteArray())
+                config.startTime = 1767711496
+                config.endTime = 1767711496
+                config.dailyCallLimit = 100
+                config.totalAllowedLimit = 500
+                operate.config = config
+                CreekManager.sInstance.setVoiceAssistantConfig(model = operate, success = {
+                    responseText.value = "success"
+                }, failure = {_, m ->
+                    responseText.value = m
+                })
+            }
+            "readRssi" -> {
+                CreekManager.sInstance.readRssi { model ->
+                    responseText.value = model.toString()
+                }
+
+            }
+            "getUnconfirmedAutoSport" -> {
+                CreekManager.sInstance.getUnconfirmedAutoSport { model: BaseModel<List<SportModel>> ->
+                    responseText.value = model.data?.toList().toString()
+                }
+
+            }
+            "editSport" -> {
+                CreekManager.sInstance.editSport(sportModel = SportModel(), model = {
+                    isBool ->
+                    responseText.value = isBool.toString()
+                })
+
+            }
+            "getPrayer" -> {
+                CreekManager.sInstance.getPrayer(model = {
+                        model ->
+                    responseText.value = model.toString()
+                },failure = { _, m ->
+                    responseText.value = m
+                })
+            }
+
+            "setPrayer" -> {
+                val operate = Prayer.protocol_prayer_operate()
+                CreekManager.sInstance.setPrayer(model = operate, success = {
                     responseText.value = "success"
                 }, failure = {_, m ->
                     responseText.value = m

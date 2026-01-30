@@ -21,6 +21,12 @@
 #-renamesourcefileattribute SourceFile
 
 
+# --- Auto generated missing class suppression ---
+-dontwarn reactor.blockhound.integration.BlockHoundIntegration
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+# --- End ---
+
 # 保留 Jetpack Compose 的类和成员
 -keep class androidx.compose.** { *; }
 -keep class androidx.activity.ComponentActivity { *; }
@@ -66,6 +72,16 @@
 -keep class com.google.gson.annotations.** { *; }
 
 #creekSDK
+-keep class io.flutter.plugins.GeneratedPluginRegistrant { *; }
+-keep class io.flutter.embedding.engine.** { *; }
+-keep class io.flutter.plugin.** { *; }
+-keep class io.flutter.view.** { *; }
+-keep class io.flutter.app.** { *; }
+-keepclassmembers class * implements io.flutter.plugin.common.MethodChannel$MethodCallHandler {
+    public void onMethodCall(io.flutter.plugin.common.MethodCall, io.flutter.plugin.common.MethodChannel$Result);
+}
+-keepattributes InnerClasses,EnclosingMethod,Signature,*Annotation*
+
 -keep class com.boskokg.flutter_blue_plus.** { *; }
 -keep class com.example.mylibrary.** { *; }
 -keep class co.quis.flutter_contacts.** { *; }
@@ -76,6 +92,10 @@
 -keep class com.example.sbc.** { *; }
 -keep class com.example.model.** { *; }
 -keep class com.example.proto.** { *; }
+-keep class com.iflytek.msc.** { *; }
+-keep class com.iflytek.cloud.** { *; }
+-keep class com.iflytek.speech.** { *; }
+
 
 
 

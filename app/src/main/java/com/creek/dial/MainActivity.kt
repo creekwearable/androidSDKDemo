@@ -48,7 +48,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.arthenica.ffmpegkit.FFmpegKit
+//import com.arthenica.ffmpegkit.FFmpegKit
 import com.creek.dial.customDial.CustomDialScreen
 import com.creek.dial.dial.DialScreen
 import com.creek.dial.healthMeasure.HealthMeasureScreen
@@ -66,6 +66,7 @@ import com.creek.dial.sportLive.SportsLiveScreen
 import com.creek.dial.ui.theme.Creek_dial_androidTheme
 import com.example.creek_blue_manage.LocalPhoneStateListener
 import com.example.model.EphemerisGPSModel
+import com.example.mylibrary.AzureRegionType
 import com.example.mylibrary.BluetoothStateType
 import com.example.mylibrary.CancelAutoConnectType
 import com.example.mylibrary.ConnectionStatus
@@ -73,17 +74,24 @@ import com.example.mylibrary.CreekClientType
 import com.example.mylibrary.CreekManager
 import com.example.mylibrary.VoiceDialType
 import com.example.mylibrary.eventIdType
+import com.example.proto.Alexa
 import com.example.proto.Call
 import com.example.proto.Enums
 import com.example.proto.Medicine
 import com.example.proto.Message
 import com.example.proto.Ring
 import com.example.proto.VolumeAdjust
+//import com.example.psplibrary.PSPParser
 //import com.example.xfyun_speech.XfyunSpeechPlugin
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.protobuf.ByteString
 import com.notification_listener_util.music.CreekMediaControllerUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okio.Timeout
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -208,13 +216,21 @@ class MainActivity : ComponentActivity(){
                             Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
                             CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume - 0.1)
                         }
+                        6 ->{
+                            val maxVolume: Int = CreekMediaControllerUtils.getInstance().mMediaController!!.playbackInfo?.maxVolume ?: mAudioManager?.getStreamMaxVolume(
+                                AudioManager.STREAM_MUSIC
+                            ) ?: 0
+                            Log.w("123456", CreekMediaControllerUtils.getInstance().getVolume().toString())
+                            CreekMediaControllerUtils.getInstance().setVolume(CreekMediaControllerUtils.getInstance().getVolume().toDouble()/maxVolume + 0.1)
+                        }
                     }
                 }
             }
             CreekManager.sInstance.exceptionListen {
-                Log.w("123456", it)
+                Log.w("exceptionListen", it)
             }
             CreekManager.sInstance.eventReportListen {
+                Log.w("eventReportListen", it.toString())
 
             }
             CreekManager.sInstance.bluetoothStateListen { state : BluetoothStateType ->
@@ -254,7 +270,27 @@ class MainActivity : ComponentActivity(){
                 })
             }
 
-            CreekManager.sInstance.aiVoiceConfig(keyId = keyId, publicKey = publicKey)
+
+            val speechKeyMap: Map<String, String> = mapOf(
+                "eastasia" to
+                        "***************",
+                "centralindia" to
+                        "***************",
+                "westeurope" to
+                        "***************",
+                "uaenorth" to
+                        "***************",
+                "brazilsouth" to
+                        "***************",
+                "southafricanorth" to
+                        "***************",
+                "southeastasia" to
+                        "***************",
+                "eastus" to
+                        "***************"
+            )
+
+            CreekManager.sInstance.aiVoiceConfig(keyId = keyId, publicKey = publicKey, speechKeyStringMap = speechKeyMap, defaultRegion = AzureRegionType.EASTUS)
             CreekManager.sInstance.setAiVoiceCountry(countryCode = "US")
             CreekManager.sInstance.setAiVoiceCity(cityName = "shengzhen")
 
@@ -265,6 +301,37 @@ class MainActivity : ComponentActivity(){
             CreekManager.sInstance.liveSportControlListen { model ->
                 println(model.toString())
             }
+
+//            CreekManager.sInstance.voiceAssistantFeatureConfigListen { model ->
+//                if (model.type == Enums.ai_feature_type.UPDATA_CONFIG){
+//                    val operate = Alexa.protocol_ai_feature_operate()
+//                    val config = Alexa.protocol_ai_feature_config()
+//                    config.userCode = ByteString.copyFrom("123".toByteArray())
+//                    config.startTime = 1767711496
+//                    config.endTime = 1767711496
+//                    config.dailyCallLimit = 100
+//                    config.totalAllowedLimit = 500
+//                    operate.config = config
+//                    CreekManager.sInstance.setVoiceAssistantConfig(model = operate, success = {
+//
+//                    }, failure = {_, m ->
+//
+//                    })
+//
+//                }else if(model.type == Enums.ai_feature_type.USE_STATUS){
+//                    ///Notify the current usage status after each AI dialogue is completed.
+//                    println(model.status.toString())
+//                }
+//            }
+//
+//            CreekManager.sInstance.hydrateAssistantUpdateListen { model ->
+//                if (model.type == Enums.hydrate_notify_type.NOTIFY_ADD){
+//                    //Add a new record to the watch
+//                }else if(model.type == Enums.hydrate_notify_type.NOTIFY_DELETE){
+//                    ///Delete records from watch
+//                }
+//                println(model.item.toString())
+//            }
 
             CreekManager.sInstance.aiDialConfig(
                 voiceData = {
@@ -356,6 +423,33 @@ class MainActivity : ComponentActivity(){
                 }
             }
         }
+
+//        CreekManager.sInstance.philipSleepListen { path ->
+//            Log.d("PSP", "文件地址: $path")
+//            try {
+//                // 读取文件
+//                val file = File(path)
+//                val data = file.readBytes()
+//
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    try {
+//                       val resultSegments = PSPParser.shared.parsePSPSleep(data)
+//                        withContext(Dispatchers.Main) {
+//                            // 回调给 SDK
+//                            CreekManager.sInstance.setPhilipSleepJson(resultSegments)
+//                        }
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                        withContext(Dispatchers.Main) {
+//                            CreekManager.sInstance.setPhilipSleepJson("")
+//                        }
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                CreekManager.sInstance.setPhilipSleepJson("")
+//            }
+//        }
 
     }
 

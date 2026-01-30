@@ -28,15 +28,23 @@ class HealthMeasureViewModel : ViewModel() {
                 timeout = 60,
                 model =  { model: Ring.protocol_ring_click_measure_operate ->
                     resultText = "结果：${model.value}"
+                    println("spo:${model.value}  pulseRateValue:${model.pulseRateValue}")
                 },
                 success = {
                     statusText = "状态：测量成功 ✅"
                 },
                 failure =  { error: CommonErrorOuterClass.CommonError ->
                     statusText = "错误：${error.message}"
+                }, abnormal = {
+                   println("有异动")
+                }, wearingNoStandard = {
+                    println("佩戴不标准")
+                }, processResult = {model: Ring.protocol_ring_click_measure_operate ->
+                    if (model.pulseRateValue > 0) {
+                        resultText = "结果：${model.pulseRateValue}"
+                    }
                 }
             )
-
         }
     }
     fun stopMeasure() {

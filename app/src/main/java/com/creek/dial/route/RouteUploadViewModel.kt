@@ -48,12 +48,12 @@ class RouteUploadViewModel(application: Application) : AndroidViewModel(applicat
     fun startUpload() {
 
         fileData?.let{
-            CreekManager.sInstance.getGPXEncodeUint8List(data = it, geoId = 1234, sportType = sportType.IRUN,model = {
+            CreekManager.sInstance.getGPXEncodeUint8List(data = it, geoId = 85563801595, sportType = sportType.IRUN,model = {
                     lat: Double, lng: Double ->
                 return@getGPXEncodeUint8List "shanghai"
             }, encode = {
                     encodeData: ByteArray ->
-                CreekManager.sInstance.upLoadGeo(data = encodeData, geoId = 1234, uploadProgress = { progress: Int ->
+                CreekManager.sInstance.upLoadGeo(data = encodeData, geoId = 85563801595, uploadProgress = { progress: Int ->
                     Log.w("upLoadGeo",progress.toString())
                 }, uploadSuccess = {
                     Log.w("upLoadGeo","success")

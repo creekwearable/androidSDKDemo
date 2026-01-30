@@ -79,9 +79,12 @@ dependencies {
 //    implementation("com.google.firebase:firebase-crashlytics")
 //    implementation("com.google.firebase:firebase-config")
 //    implementation("com.google.firebase:firebase-perf")
-
-    implementation("com.example.creek_sdk:flutter_release:9.4")
-    implementation("creek_aar:creek_aar_release:9.4")
+//    implementation(fileTree(mapOf(
+//        "dir" to "libs",
+//        "include" to listOf("*.jar", "*.aar")
+//    )))
+    implementation("com.example.creek_sdk:flutter_release:10.2")
+    implementation("creek_aar:creek_aar_release:10.2")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -106,7 +109,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata")
 
     implementation("com.github.yalantis:ucrop:2.2.8-native")
-    implementation("arthenica:creek-ffmpeg-kit-https:1.0.5")
+//    implementation("arthenica:creek-ffmpeg-kit-https:1.0.6")
     ///为了兼容24的API 需要指定azure-core的版本
 //    implementation("com.microsoft.cognitiveservices.speech:client-sdk:1.44.0") {
 //        exclude(group = "com.azure", module = "azure-core")

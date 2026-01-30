@@ -108,6 +108,20 @@ class SdkFunctionViewModel : ViewModel() {
         "set cardio fitness",
         "get qr code",
         "set qr code",
+        "get deviceStatus",
+        "getHydrateAssistant",
+        "addHydrateAssistant",
+        "getHydrateAssistantConfig",
+        "setHydrateAssistantConfig",
+        "setVitalityScore",
+        "getCalendar",
+        "getHydrateAssistantSupportType",
+        "setVoiceAssistantConfig",
+        "readRssi",
+        "getUnconfirmedAutoSport",
+        "editSport",
+        "getPrayer",
+        "setPrayer",
 
         )
 
